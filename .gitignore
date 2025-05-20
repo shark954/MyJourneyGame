@@ -1,0 +1,15 @@
+MyJourneyGame/.vs
+MyJourneyGame/*.csproj
+MyJourneyGame/Library
+MyJourneyGame/Temp/
+MyJourneyGame/Library/
+MyJourneyGame/obj/
+MyJourneyGame/*.unitypackage
+MyJourneyGame/*.sln
+MyJourneyGame/UnityPackageManager
+MyJourneyGame/*.collabignore
+MyJourneyGame/AssetBundles/
+MyJourneyGame/EXE/
+MyJourneyGame/.vsconfig
+MyJourneyGame/UserSettings
+MyJourneyGame/Logs
