@@ -1,47 +1,51 @@
-
 using UnityEngine;
-using TMPro;
-using UnityEngine.Video;
-using System.Collections;
 
 /// <summary>
-/// タイトル画面の演出と開始操作を管理（同一Scene構成）
+/// タイトル画面の演出と開始操作を管理（FadeInOut スクリプト使用版）
 /// </summary>
 public class TitleManager : MonoBehaviour
 {
-    public CanvasGroup titlePanel;           // タイトル用パネル（フェードに使用）
-    public TMP_Text titleText;               // タイトルの文字
-    public VideoPlayer titleVideoPlayer;     // 背景動画
-    public float fadeDuration = 1f;          // フェード時間
+    public CanvasGroup m_titlePanel;         // タイトル用パネル（UI制御）
+    public GameObject m_gamePanel;           // 本編UIパネル（切替用）
+    public GameObject m_storyPanel;           // 本編UIパネル（切替用）
+    public FadeInOut m_fadeScript;           // フェードスクリプト（Imageにアタッチ）
+    public GameManager m_gameManager;
 
-    public GameObject gamePanel;             // 本編パネル（切り替え用）
+    private bool m_gameStarted = false;      // 遷移完了フラグ
+    private float m_waitTime = 1f;           // フェードアウト待ち時間
+    private float m_timer = 0f;
 
-    void Start()
+    void Update()
     {
-        titleText.text = "旅の向かう先";
-        titleVideoPlayer.Play();
-        titlePanel.alpha = 1;
+        if (m_gameStarted)
+        {
+            m_timer += Time.deltaTime;
+
+            if (m_timer >= m_waitTime)
+            {
+                m_titlePanel.gameObject.SetActive(false);
+                //m_gamePanel.SetActive(true);
+                
+            }
+        }
     }
 
     /// <summary>
-    /// スタートボタンを押したときに呼ばれる
+    /// スタートボタンから呼び出される（フェード開始）
     /// </summary>
     public void OnStartButtonPressed()
     {
-        StartCoroutine(FadeOutAndStartGame());
-    }
-
-    private IEnumerator FadeOutAndStartGame()
-    {
-        float time = 0;
-        while (time < fadeDuration)
+        m_fadeScript.StartFade(false, () =>
         {
-            titlePanel.alpha = Mathf.Lerp(1, 0, time / fadeDuration);
-            time += Time.deltaTime;
-            yield return null;
-        }
-        titlePanel.alpha = 0;
-        titlePanel.gameObject.SetActive(false);
-        gamePanel.SetActive(true); // 本編UI表示
+            // フェードアウト完了後にゲーム開始
+            m_titlePanel.gameObject.SetActive(false);
+            m_gamePanel.SetActive(true);
+            m_storyPanel.SetActive(true);
+            m_gameManager.ShowScene(0); // ← ここで初めてシーン0を表示
+
+            // フェードインで黒を消す
+            m_fadeScript.StartFade(true);
+            enabled = false; // TitleManagerを無効化
+        });
     }
 }
