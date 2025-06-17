@@ -41,7 +41,7 @@ public class TitleManager : MonoBehaviour
             m_titlePanel.gameObject.SetActive(false);
             m_gamePanel.SetActive(true);
             m_storyPanel.SetActive(true);
-            m_gameManager.ShowScene(0); // ← ここで初めてシーン0を表示
+            //m_gameManager.ShowScene(0); // ← ここで初めてシーン0を表示
 
             // フェードインで黒を消す
             m_fadeScript.StartFade(true);

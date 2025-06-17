@@ -1,0 +1,24 @@
+# 表示するテキスト
+TEXT:うほ、いいおとこ
+TEXT:やーめーれーーーーー
+TEXT:アッー
+TEXT:・・・。
+
+# 画像を表示
+SHOW_IMAGE_S:主人公
+TEXT:主人公センター
+
+SHOW_IMAGE_R:主人公
+TEXT:主人公右
+
+SHOW_IMAGE_L:主人公
+TEXT:主人公左
+
+# 表示するテキスト
+TEXT:この村を救ってください。
+
+# BGMを再生
+PLAY_BGM:AdventureTheme
+
+# 正面画を消す
+SHOW_IMAGE_S_CLS:
