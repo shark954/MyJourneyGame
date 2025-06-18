@@ -1,0 +1,6 @@
+
+ The striker has no weapons.
+ Please note that this is not a defect.
+
+ 格闘家は武器持ち差分がありません。
+ 不備ではありませんのでご注意ください。

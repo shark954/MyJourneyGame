@@ -3,9 +3,10 @@ TEXT:ここはラビリンス王国。魔力と剣の均衡が崩れつつあっ
 PLAY_BGM:intro_theme
 TEXT:あなたは、運命を背負った若き勇者。
 
-SHOW_IMAGE_L:hero
-TEXT:村長「まずは東の森で試練を受けよ。真の勇者か試されるであろう」
+SHOW_IMAGE_L:hero_f
 
+TEXT:村長「まずは東の森で試練を受けよ。真の勇者か試されるであろう」
+SHOW_BGI:forest_background
 # 森への出発
 PLAY_BGM:forest_theme
 TEXT:森の入り口に着いた。霧が立ち込めている。

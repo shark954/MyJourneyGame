@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 
 /// <summary>
 /// 外部テキストファイルからシナリオを読み取り、コマンドを実行するシステム
@@ -29,10 +30,14 @@ public class TextAdventureSystem : MonoBehaviour
     public Text m_DisplayText;
     [Header("画像表示用×3")]
     public List<Image> m_DisplayImage;
+    [Header("背景画像")]
+    public Image m_backGroundImage;
     [Header("選択肢ボタン群")]
     public List<Button> m_ChoiceButtons;
-    [Header("リソース【画像】")]
-    public string m_ImageResourcePath = "Images/";
+    [Header("キャラリソース【画像】")]
+    public string m_CharaImageResourcePath = "Images/Character";
+    [Header("背景リソース【画像】")]
+    public string m_BackGroundImageResourcePath = "Images/BackGround";
     [Header("BGM用")]
     public AudioSource m_BgmSource;
     [Header("取り込んだシナリオ")]
@@ -158,7 +163,7 @@ public class TextAdventureSystem : MonoBehaviour
         else if (command.StartsWith("SHOW_IMAGE_S:"))
         {
             //13文字削除後、キャライメージ【中央】を表示する
-            ImageCharacterRender(DataPatch(command, 13), 0);
+            ImageCharacterRender(DataPatch(command, 13), 2);
             // 画像表示後は自動進行
             NextCommand();
         }
@@ -169,7 +174,7 @@ public class TextAdventureSystem : MonoBehaviour
         {
 
             //13文字削除後、キャライメージ【右】を表示する
-            ImageCharacterRender(DataPatch(command, 13), 1);
+            ImageCharacterRender(DataPatch(command, 13), 0);
             // 画像表示後は自動進行
             NextCommand();
         }
@@ -179,13 +184,22 @@ public class TextAdventureSystem : MonoBehaviour
         else if (command.StartsWith("SHOW_IMAGE_L:"))
         {
             //13文字削除後、キャライメージ【左】を表示する
-            ImageCharacterRender(DataPatch(command, 13), 2);
+            ImageCharacterRender(DataPatch(command, 13), 1);
             // 画像表示後は自動進行
             NextCommand();
         }
         #endregion
-        #region "PLAY_BGM:" で始まる場合：BGM再生
-        // "PLAY_BGM:" で始まる場合：BGM再生
+        #region "SHOW_BGI:":背景表示
+        else if (command.StartsWith("SHOW_BGI:"))
+        {
+            // 9文字削除後、背景を表示する
+            ImageBackGroundRender(DataPatch(command, 9));
+            // 画像表示後は自動進行
+            NextCommand();
+        }
+        #endregion
+            #region "PLAY_BGM:" で始まる場合：BGM再生
+            // "PLAY_BGM:" で始まる場合：BGM再生
         else if (command.StartsWith("PLAY_BGM:"))
         {
             // "PLAY_BGM:"以降の文字列
@@ -196,9 +210,19 @@ public class TextAdventureSystem : MonoBehaviour
             NextCommand();
         }
         #endregion
-        #region "SHOW_IMAGE_S_CLS:" で始まる場合：画像表示
+        #region "SHOW_IMAGE_S_CLS:" で始まる場合：画像非表示
         // "SHOW_IMAGE_S_CLS:" で始まる場合：画像表示
         else if (command.StartsWith("SHOW_IMAGE_S_CLS:"))
+        {
+            // 中央イメージキャラクターパネルを消す
+            ImageCharacterCLS(2);
+            // 画像表示後は自動進行
+            NextCommand();
+        }
+        #endregion
+        #region "SHOW_IMAGE_R_CLS:" で始まる場合：画像非表示
+        // "SHOW_IMAGE_R_CLS:" で始まる場合：画像表示
+        else if (command.StartsWith("SHOW_IMAGE_R_CLS:"))
         {
             // 中央イメージキャラクターパネルを消す
             ImageCharacterCLS(0);
@@ -206,22 +230,12 @@ public class TextAdventureSystem : MonoBehaviour
             NextCommand();
         }
         #endregion
-        #region "SHOW_IMAGE_R_CLS:" で始まる場合：画像表示
-        // "SHOW_IMAGE_R_CLS:" で始まる場合：画像表示
-        else if (command.StartsWith("SHOW_IMAGE_R_CLS:"))
-        {
-            // 中央イメージキャラクターパネルを消す
-            ImageCharacterCLS(1);
-            // 画像表示後は自動進行
-            NextCommand();
-        }
-        #endregion
-        #region "SHOW_IMAGE_L_CLS:" で始まる場合：画像表示
+        #region "SHOW_IMAGE_L_CLS:" で始まる場合：画像非表示
         // "SHOW_IMAGE_L_CLS:" で始まる場合：画像表示
         else if (command.StartsWith("SHOW_IMAGE_L_CLS:"))
         {
             // 中央イメージキャラクターパネルを消す
-            ImageCharacterCLS(2);
+            ImageCharacterCLS(1);
             // 画像表示後は自動進行
             NextCommand();
         }
@@ -299,11 +313,11 @@ public class TextAdventureSystem : MonoBehaviour
     /// キャラクターイメージをresourceから取り出して指定した場所に表示する
     /// </summary>
     /// <param name="Message">resourceフォルダから取り出したい画像名</param>
-    /// <param name="No">表示したいパネル番号[0.中央、1.右、2.左]</param>
+    /// <param name="No">表示したいパネル番号[2.中央、1.右、0.左]</param>
     public void ImageCharacterRender(string Message, int No)
     {
         // Resourcesから画像読み込み
-        Sprite sprite = Resources.Load<Sprite>(m_ImageResourcePath + Message);
+        Sprite sprite = Resources.Load<Sprite>(m_CharaImageResourcePath + "/" + Message);
         // 表示先があるかどうか
         if (sprite != null)
         {
@@ -315,6 +329,21 @@ public class TextAdventureSystem : MonoBehaviour
         else
             Debug.LogWarning("画像が見つからん!: " + Message);
     }
+
+    public void ImageBackGroundRender(string Message)
+    {
+        Sprite sprite = Resources.Load<Sprite>(m_BackGroundImageResourcePath + "/" + Message);
+        if (sprite != null)
+        {
+            m_backGroundImage.sprite = sprite;
+            m_backGroundImage.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+        else
+        {
+            Debug.LogWarning("画像がない:" + Message);
+        }
+    }
+
     public void BackGroundMusic(string Message)
     {
         // ResourcesからBGM読み込み
@@ -423,18 +452,35 @@ public class TextAdventureSystem : MonoBehaviour
     {
         m_WaitingForClick = false;
 
+        if (texts == null || labels == null)
+        {
+            Debug.LogError("texts または labels が null です");
+            return;
+        }
+
+        // 通常の分岐表示処理へ
+
         for (int i = 0; i < m_ChoiceButtons.Count; i++)
         {
             if (i < texts.Length)
             {
                 int index = i;
                 m_ChoiceButtons[i].gameObject.SetActive(true);
-                m_ChoiceButtons[i].GetComponentInChildren<Text>().text = texts[i];
+                var tmpText = m_ChoiceButtons[i].GetComponentInChildren<TextMeshProUGUI>();
+                if (tmpText != null)
+                {
+                    tmpText.text = texts[i];
+                }
+                else
+                {
+                    Debug.LogError($"Button[{i}] に TextMeshProUGUI が見つかりません！");
+                }
 
                 m_ChoiceButtons[i].onClick.RemoveAllListeners();
                 m_ChoiceButtons[i].onClick.AddListener(() =>
                 {
                     HideChoices(); // 他の選択肢を非表示
+                    UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(m_ChoiceButtons[index].gameObject);
 
                     if (!string.IsNullOrEmpty(labels[index]))
                     {
