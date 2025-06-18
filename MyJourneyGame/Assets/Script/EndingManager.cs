@@ -26,6 +26,8 @@ public class EndingManager : MonoBehaviour
     [Header("演出タイミング")]
     public float m_holdTime = 10f;            // メッセージの表示時間（秒）
 
+    public AudioSource m_endBGM;
+
     public Image m_clearBackground;
     public Image m_gameOverBackground;
 

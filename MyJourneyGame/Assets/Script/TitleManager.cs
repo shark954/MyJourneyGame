@@ -7,9 +7,10 @@ public class TitleManager : MonoBehaviour
 {
     public CanvasGroup m_titlePanel;         // タイトル用パネル（UI制御）
     public GameObject m_gamePanel;           // 本編UIパネル（切替用）
-    public GameObject m_storyPanel;           // 本編UIパネル（切替用）
+    public GameObject m_storyPanel;          // 本編UIパネル（切替用）
     public FadeInOut m_fadeScript;           // フェードスクリプト（Imageにアタッチ）
-    public GameManager m_gameManager;
+    public GameManager m_gameManager;        // ゲームマネージャー 
+    public AudioSource m_titleBGM;
 
     private bool m_gameStarted = false;      // 遷移完了フラグ
     private float m_waitTime = 1f;           // フェードアウト待ち時間
@@ -40,8 +41,8 @@ public class TitleManager : MonoBehaviour
             // フェードアウト完了後にゲーム開始
             m_titlePanel.gameObject.SetActive(false);
             m_gamePanel.SetActive(true);
-            m_storyPanel.SetActive(true);
-            //m_gameManager.ShowScene(0); // ← ここで初めてシーン0を表示
+            m_gameManager.m_adventureSystem.enabled = true;
+           
 
             // フェードインで黒を消す
             m_fadeScript.StartFade(true);

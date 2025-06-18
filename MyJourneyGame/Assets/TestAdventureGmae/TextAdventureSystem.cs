@@ -16,6 +16,15 @@ public class TextAdventureSystem : MonoBehaviour
 
     public Mode currentMode = Mode.Normal;
 
+    // 全シナリオ行を保持（ジャンプ処理で使う）
+    private List<string> m_AllLines = new List<string>();
+
+    // 現在の読み込み位置（未使用でもいいが念のため）
+    private int m_CurrentLineIndex = 0;
+
+    // ラベル名とその行番号のマッピング
+    private Dictionary<string, int> m_LabelLineIndex = new Dictionary<string, int>();
+
     [Header("テキストを表示するUI")]
     public Text m_DisplayText;
     [Header("画像表示用×3")]
@@ -58,7 +67,8 @@ public class TextAdventureSystem : MonoBehaviour
     /// 外部テキストファイル（シナリオ）を読み込む処理
     /// </summary>
     /// <param name="filePath">ファイルパス</param>
-    void LoadScenario(string filePath)
+    /// 
+   /* void LoadScenario(string filePath)
     {
         if (!File.Exists(filePath))
         {
@@ -74,6 +84,36 @@ public class TextAdventureSystem : MonoBehaviour
             // 空行を除いてキューに追加
             if (!string.IsNullOrWhiteSpace(line))
                 m_Commands.Enqueue(line.Trim());
+        }
+    }*/
+
+    void LoadScenario(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError("シナリオファイルが見つからねぇよ!: " + filePath);
+            return;
+        }
+
+        string[] lines = File.ReadAllLines(filePath);
+        m_AllLines = new List<string>(lines); // 全行を保持
+        m_Commands.Clear();
+        m_LabelLineIndex.Clear();
+
+        for (int i = 0; i < m_AllLines.Count; i++)
+        {
+            string line = m_AllLines[i].Trim();
+
+            // ラベル行（LABEL:）はジャンプ用に記録して、それ以外はコマンドとして保存
+            if (line.StartsWith("LABEL:"))
+            {
+                string label = line.Substring(6).Trim();
+                m_LabelLineIndex[label] = i + 1; // 次の行から実行再開
+            }
+            else if (!string.IsNullOrWhiteSpace(line))
+            {
+                m_Commands.Enqueue(line);
+            }
         }
     }
 
@@ -194,6 +234,32 @@ public class TextAdventureSystem : MonoBehaviour
             FindObjectOfType<BattleSystem>().StartBattle();
             // 今のクラスでは進行ストップ
             m_WaitingForClick = false;
+        }
+        #endregion
+        #region "ボタン選択"
+        else if (command.StartsWith("CHOICE:"))
+        {
+            // 選択肢：テキストとジャンプ先ラベルを分離して格納
+            string[] rawChoices = DataPatch(command, 7).Split('|');
+            List<string> labels = new List<string>();
+            List<string> texts = new List<string>();
+
+            foreach (string c in rawChoices)
+            {
+                if (c.Contains("->"))
+                {
+                    string[] parts = c.Split(new string[] { "->" }, System.StringSplitOptions.None);
+                    texts.Add(parts[0].Trim());   // 表示されるテキスト
+                    labels.Add(parts[1].Trim());  // ジャンプ先ラベル
+                }
+                else
+                {
+                    texts.Add(c.Trim());
+                    labels.Add(""); // ラベルなし
+                }
+            }
+
+            ShowBranchingChoices(texts.ToArray(), labels.ToArray());
         }
         #endregion
         #region その他
@@ -328,5 +394,67 @@ public class TextAdventureSystem : MonoBehaviour
             }
         }
     }
+
+    public void JumpToLabel(string label)
+    {
+        if (m_LabelLineIndex.ContainsKey(label))
+        {
+            m_Commands.Clear();
+            m_CurrentLineIndex = m_LabelLineIndex[label];
+
+            // ラベル以降のコマンドだけを再び m_Commands に入れる
+            for (int i = m_CurrentLineIndex; i < m_AllLines.Count; i++)
+            {
+                string line = m_AllLines[i].Trim();
+                if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("LABEL:"))
+                    m_Commands.Enqueue(line);
+            }
+
+            // 次のコマンドへ進行
+            NextCommand();
+        }
+        else
+        {
+            Debug.LogWarning("ラベルが見つからん!: " + label);
+        }
+    }
+
+    public void ShowBranchingChoices(string[] texts, string[] labels)
+    {
+        m_WaitingForClick = false;
+
+        for (int i = 0; i < m_ChoiceButtons.Count; i++)
+        {
+            if (i < texts.Length)
+            {
+                int index = i;
+                m_ChoiceButtons[i].gameObject.SetActive(true);
+                m_ChoiceButtons[i].GetComponentInChildren<Text>().text = texts[i];
+
+                m_ChoiceButtons[i].onClick.RemoveAllListeners();
+                m_ChoiceButtons[i].onClick.AddListener(() =>
+                {
+                    HideChoices(); // 他の選択肢を非表示
+
+                    if (!string.IsNullOrEmpty(labels[index]))
+                    {
+                        // ラベルが設定されていればジャンプ
+                        JumpToLabel(labels[index]);
+                    }
+                    else
+                    {
+                        // ラベルがない場合はそのまま通常進行
+                        TextRender($"あなたは「{texts[index]}」を選びました。");
+                        m_WaitingForClick = true;
+                    }
+                });
+            }
+            else
+            {
+                m_ChoiceButtons[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
 }
 

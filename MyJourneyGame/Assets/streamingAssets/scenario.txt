@@ -1,24 +1,74 @@
-# 表示するテキスト
-TEXT:うほ、いいおとこ
-TEXT:やーめーれーーーーー
-TEXT:アッー
-TEXT:・・・。
+# プロローグ：村で旅立ち
+TEXT:ここはラビリンス王国。魔力と剣の均衡が崩れつつあった。
+PLAY_BGM:intro_theme
+TEXT:あなたは、運命を背負った若き勇者。
 
-# 画像を表示
-SHOW_IMAGE_S:主人公
-TEXT:主人公センター
+SHOW_IMAGE_L:hero
+TEXT:村長「まずは東の森で試練を受けよ。真の勇者か試されるであろう」
 
-SHOW_IMAGE_R:主人公
-TEXT:主人公右
+# 森への出発
+PLAY_BGM:forest_theme
+TEXT:森の入り口に着いた。霧が立ち込めている。
+TEXT:道が二手に分かれている……どちらへ進む？
 
-SHOW_IMAGE_L:主人公
-TEXT:主人公左
+# CHOICE: 表示テキスト -> ジャンプ先ラベル
+CHOICE:陽の射す道->SUN_PATH|闇に包まれた道->DARK_PATH
 
-# 表示するテキスト
-TEXT:この村を救ってください。
+# ▼ 選択肢1: 陽の射す道へ進んだ場合
+LABEL:SUN_PATH
+TEXT:あなたは陽の道を進んだ。
+SHOW_IMAGE_R:slime
+TEXT:スライムが現れた！
+START_BATTLE
+TEXT:スライムを倒した！
+SHOW_IMAGE_R_CLS:
+JUMP:TRIAL_CORE  # 共通処理にジャンプ
 
-# BGMを再生
-PLAY_BGM:AdventureTheme
+# ▼ 選択肢2: 闇の道へ進んだ場合
+LABEL:DARK_PATH
+TEXT:あなたは闇の道を慎重に進んだ。
+SHOW_IMAGE_R:bat
+TEXT:コウモリの群れが襲ってきた！
+START_BATTLE
+TEXT:敵を振り払い、前へ進んだ。
+SHOW_IMAGE_R_CLS:
+JUMP:TRIAL_CORE
 
-# 正面画を消す
+# ▼ 試練の中心部（分岐後に合流）
+LABEL:TRIAL_CORE
+TEXT:地面に何かが落ちている……古びた巻物だ。
+CHOICE:拾う->GET_SCROLL|無視する->IGNORE_SCROLL
+
+LABEL:GET_SCROLL
+TEXT:巻物を開くと、魔力が身体に流れ込んだ！
+SHOW_IMAGE_S:spirit
+PLAY_BGM:magic_theme
+TEXT:精霊「その力……お前は試されている」
 SHOW_IMAGE_S_CLS:
+JUMP:MAGICIAN_APPEARS
+
+LABEL:IGNORE_SCROLL
+TEXT:あなたは巻物を無視し、奥へ進んだ。
+JUMP:MAGICIAN_APPEARS
+
+# ▼ 魔導士との遭遇（選択関係なく進む）
+LABEL:MAGICIAN_APPEARS
+SHOW_IMAGE_R:dark_mage
+TEXT:魔導士「その力、貴様にふさわしくはない！」
+PLAY_BGM:dark_theme
+TEXT:魔導士「我が弟子となれ！」
+
+CHOICE:従う->OBEY|拒む->REFUSE
+
+LABEL:OBEY
+TEXT:あなたは魔導士に従い、闇の道を歩んだ……
+PLAY_BGM:bad_end
+TEXT:～ バッドエンド ～
+
+LABEL:REFUSE
+TEXT:あなたは魔導士に立ち向かう覚悟を決めた！
+START_BATTLE
+TEXT:勝利の光があなたを包んだ！
+SHOW_IMAGE_R_CLS:
+PLAY_BGM:victory
+TEXT:～ ハッピーエンド ～
