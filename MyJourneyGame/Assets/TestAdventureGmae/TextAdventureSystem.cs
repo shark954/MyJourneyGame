@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
+using System.Collections;
 
 /// <summary>
 /// 外部テキストファイルからシナリオを読み取り、コマンドを実行するシステム
@@ -26,6 +27,12 @@ public class TextAdventureSystem : MonoBehaviour
     // ラベル名とその行番号のマッピング
     private Dictionary<string, int> m_LabelLineIndex = new Dictionary<string, int>();
 
+    [Header("背景画像（新）")]
+    public Image m_backGroundImageNew; // 通常の背景表示用
+
+    [Header("背景画像（旧）")]
+    public Image m_backGroundImageOld; // フェードアウト用重ね背景
+
     [Header("テキストを表示するUI")]
     public Text m_DisplayText;
     [Header("画像表示用×3")]
@@ -45,6 +52,12 @@ public class TextAdventureSystem : MonoBehaviour
     [Header("左クリック待ちフラグ")]
     public bool m_WaitingForClick = false;
 
+    private bool m_IsFading = false;
+    private float m_FadeDuration = 1.0f;
+    private float m_FadeElapsed = 0f;
+    private int m_SelectedChoiceIndex = -1;
+    private Sprite m_PendingBackground = null;
+
     void Start()
     {
         // キャラクター画像を初期透明にする
@@ -60,13 +73,33 @@ public class TextAdventureSystem : MonoBehaviour
 
     void Update()
     {
-        // m_WaitingForClickがtrueの時、左クリックを検出
+        if (m_IsFading)
+        {
+            m_FadeElapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(m_FadeElapsed / m_FadeDuration);
+
+            m_backGroundImageOld.color = new Color(1, 1, 1, 1 - t);
+            m_backGroundImageNew.color = new Color(1, 1, 1, t);
+
+            if (t >= 1.0f)
+            {
+                m_IsFading = false;
+                m_backGroundImageOld.color = new Color(1, 1, 1, 0);
+                m_backGroundImageNew.color = new Color(1, 1, 1, 1);
+                NextCommand();
+            }
+
+            return;
+        }
+
+        // 通常のクリック処理
         if (m_WaitingForClick && Input.GetMouseButtonDown(0))
         {
-            // 次のコマンドを実行
             NextCommand();
         }
     }
+
+
 
     /// <summary>
     /// 外部テキストファイル（シナリオ）を読み込む処理
@@ -127,6 +160,8 @@ public class TextAdventureSystem : MonoBehaviour
     /// </summary>
     void NextCommand()
     {
+        //HideChoices(); // ← ここで毎回非表示にする！
+
         if (m_Commands.Count == 0)
         {
             // シナリオが終了した場合
@@ -189,16 +224,7 @@ public class TextAdventureSystem : MonoBehaviour
             NextCommand();
         }
         #endregion
-        #region "SHOW_BGI:":背景表示
-        else if (command.StartsWith("SHOW_BGI:"))
-        {
-            // 9文字削除後、背景を表示する
-            ImageBackGroundRender(DataPatch(command, 9));
-            // 画像表示後は自動進行
-            NextCommand();
-        }
-        #endregion
-            #region "PLAY_BGM:" で始まる場合：BGM再生
+        #region "PLAY_BGM:" で始まる場合：BGM再生
             // "PLAY_BGM:" で始まる場合：BGM再生
         else if (command.StartsWith("PLAY_BGM:"))
         {
@@ -276,6 +302,13 @@ public class TextAdventureSystem : MonoBehaviour
             ShowBranchingChoices(texts.ToArray(), labels.ToArray());
         }
         #endregion
+        #region "SHOW_BGI:":背景表示
+        else if (command.StartsWith("SHOW_BGI:"))
+        {
+            string imageName = DataPatch(command, 9);
+            StartFadeBackground(imageName, 1.0f); // フェード1秒
+        }
+        #endregion
         #region その他
         else
         {
@@ -330,19 +363,39 @@ public class TextAdventureSystem : MonoBehaviour
             Debug.LogWarning("画像が見つからん!: " + Message);
     }
 
+    /// <summary>
+    /// 背景画像を切り替える（フェード演出付き）
+    /// </summary>
+    /// <param name="Message">読み込む背景画像名</param>
     public void ImageBackGroundRender(string Message)
     {
-        Sprite sprite = Resources.Load<Sprite>(m_BackGroundImageResourcePath + "/" + Message);
-        if (sprite != null)
+        Sprite newSprite = Resources.Load<Sprite>(m_BackGroundImageResourcePath + "/" + Message);
+
+        if (newSprite != null)
         {
-            m_backGroundImage.sprite = sprite;
-            m_backGroundImage.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            if (m_backGroundImageNew.sprite != null)
+            {
+                m_backGroundImageOld.sprite = m_backGroundImageNew.sprite;
+                m_backGroundImageOld.color = new Color(1, 1, 1, 1);
+            }
+            else
+            {
+                m_backGroundImageOld.color = new Color(1, 1, 1, 0);
+            }
+
+            m_backGroundImageNew.sprite = newSprite;
+
+            // 新しい画像は透明にして、フェード完了後に表示する
+            m_backGroundImageNew.color = new Color(1, 1, 1, 0);
+
         }
         else
         {
-            Debug.LogWarning("画像がない:" + Message);
+            Debug.LogWarning("背景画像が見つからん!: " + Message);
         }
     }
+
+
 
     public void BackGroundMusic(string Message)
     {
@@ -479,27 +532,74 @@ public class TextAdventureSystem : MonoBehaviour
                 m_ChoiceButtons[i].onClick.RemoveAllListeners();
                 m_ChoiceButtons[i].onClick.AddListener(() =>
                 {
-                    HideChoices(); // 他の選択肢を非表示
-                    UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(m_ChoiceButtons[index].gameObject);
 
+                    Debug.Log("選ばれた: " + texts[index]);
+
+                    // 全ボタン非表示
+                    HideChoices();
+
+                    // 選択されたボタンに色を残す設定（必要なら）
+                    var colors = m_ChoiceButtons[index].colors;
+                    colors.normalColor = colors.pressedColor;
+                    m_ChoiceButtons[index].colors = colors;
+
+                    // ラベルへジャンプまたはそのまま表示
                     if (!string.IsNullOrEmpty(labels[index]))
                     {
-                        // ラベルが設定されていればジャンプ
                         JumpToLabel(labels[index]);
                     }
                     else
                     {
-                        // ラベルがない場合はそのまま通常進行
                         TextRender($"あなたは「{texts[index]}」を選びました。");
                         m_WaitingForClick = true;
                     }
                 });
+
             }
             else
             {
                 m_ChoiceButtons[i].gameObject.SetActive(false);
             }
         }
+    }
+
+
+    /// <summary>
+    /// 背景の古い画像をフェードアウトさせる
+    /// </summary>
+    /// <param name="duration">フェードにかける時間（秒）</param>
+    private void StartFadeBackground(string imageName, float duration)
+    {
+        m_PendingBackground = Resources.Load<Sprite>(m_BackGroundImageResourcePath + "/" + imageName);
+
+        if (m_PendingBackground == null)
+        {
+            Debug.LogWarning("背景画像が見つからん!: " + imageName);
+            NextCommand();
+            return;
+        }
+
+        // 前の背景がない（＝初回）なら即切り替え
+        if (m_backGroundImageNew.sprite == null)
+        {
+            m_backGroundImageNew.sprite = m_PendingBackground;
+            m_backGroundImageNew.color = new Color(1, 1, 1, 1); // 透明にせず即表示
+            m_backGroundImageOld.color = new Color(1, 1, 1, 0); // 念のため非表示
+            NextCommand(); // 即進行
+            return;
+        }
+
+        // フェード演出あり
+        m_backGroundImageOld.sprite = m_backGroundImageNew.sprite;
+        m_backGroundImageOld.color = new Color(1, 1, 1, 1);
+
+        m_backGroundImageNew.sprite = m_PendingBackground;
+        m_backGroundImageNew.color = new Color(1, 1, 1, 0);
+
+        m_IsFading = true;
+        m_FadeDuration = duration;
+        m_FadeElapsed = 0f;
+        m_WaitingForClick = false;
     }
 
 }

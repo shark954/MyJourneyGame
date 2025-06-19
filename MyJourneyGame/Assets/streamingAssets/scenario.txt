@@ -18,6 +18,7 @@ CHOICE:陽の射す道->SUN_PATH|闇に包まれた道->DARK_PATH
 # ▼ 選択肢1: 陽の射す道へ進んだ場合
 LABEL:SUN_PATH
 TEXT:あなたは陽の道を進んだ。
+SHOW_BGI:mountain_background
 SHOW_IMAGE_R:slime
 TEXT:スライムが現れた！
 START_BATTLE
@@ -28,6 +29,7 @@ JUMP:TRIAL_CORE  # 共通処理にジャンプ
 # ▼ 選択肢2: 闇の道へ進んだ場合
 LABEL:DARK_PATH
 TEXT:あなたは闇の道を慎重に進んだ。
+SHOW_BGI:ゲームオーバー
 SHOW_IMAGE_R:bat
 TEXT:コウモリの群れが襲ってきた！
 START_BATTLE
