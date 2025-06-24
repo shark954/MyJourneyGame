@@ -441,7 +441,7 @@ public class TextAdventureSystem : MonoBehaviour
         }
     }
 
-    public void ShowChoices(string[] choices)
+    /*public void ShowChoices(string[] choices)
     {
         m_WaitingForClick = false;
 
@@ -475,7 +475,7 @@ public class TextAdventureSystem : MonoBehaviour
                 m_ChoiceButtons[i].gameObject.SetActive(false);
             }
         }
-    }
+    }*/
 
     public void JumpToLabel(string label)
     {
