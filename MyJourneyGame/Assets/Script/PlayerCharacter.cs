@@ -20,12 +20,22 @@ public class PlayerCharacter : CharacterBase
     public Image m_iconImage;
     public Sprite m_normal, m_selected, m_damaged, m_lowHP;
 
+    [Header("攻撃力、通常・スキル")]
+    public int m_nomal;
+    public int m_skill;
+
+    public float m_addPower;
+    public int m_chageCount;
+
     /// <summary>
     /// 初期化処理（HP/SPなど）
     /// </summary>
     protected override void Start()
     {
         base.Start();
+        m_hpSlider.interactable = false;
+        m_nomalAttack = m_nomal;
+        m_skillAttack = m_skill;
         UpdateStatusDisplay();
     }
 
@@ -34,8 +44,9 @@ public class PlayerCharacter : CharacterBase
     /// </summary>
     public void Attack(CharacterBase target)
     {
-        Debug.Log($"{m_characterName} の攻撃！");
-        target.TakeDamage(10);
+        int damage = CalculateDamage(m_nomalAttack, m_addPower, m_chageCount); // addPower=1, chargeCount=1 と仮定
+        Debug.Log($"{m_characterName} の攻撃！ → {damage} ダメージ");
+        target.TakeDamage(damage);
     }
 
     /// <summary>
@@ -45,15 +56,27 @@ public class PlayerCharacter : CharacterBase
     {
         if (m_currentSP >= 5)
         {
-            Debug.Log($"{m_characterName} のスキル発動！");
+            int damage = CalculateDamage(m_skillAttack, 1.5f, 2); // 仮にスキルは強めに設定
+            Debug.Log($"{m_characterName} のスキル発動！ → {damage} ダメージ");
             m_currentSP -= 5;
-            target.TakeDamage(20);
+            target.TakeDamage(damage);
             UpdateStatusDisplay();
         }
         else
         {
             Debug.Log($"{m_characterName} は SP が足りない！");
         }
+    }
+
+
+    /// <summary>
+    /// ダメージの計算処理
+    /// </summary>
+    private int CalculateDamage(float baseDamage, float addPower, int chargeCount)
+    {
+        float chargePower = addPower * chargeCount;
+        float randomFactor = Random.Range((baseDamage * chargePower) / 2f, baseDamage * chargePower);
+        return Mathf.RoundToInt(baseDamage + randomFactor);
     }
 
     /// <summary>

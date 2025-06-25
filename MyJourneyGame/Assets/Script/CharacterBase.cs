@@ -10,6 +10,8 @@ public class CharacterBase : MonoBehaviour
     public int m_currentHP;
     public int m_maxSP = 30;
     public int m_currentSP;
+    public int m_nomalAttack;
+    public int m_skillAttack;
 
     protected virtual void Start()
     {

@@ -42,6 +42,12 @@ public class BattleSystem : MonoBehaviour
         m_selectedCharacterName = charaName;
         int selectedIndex = ExtractIndexFromName(charaName); // "Character2" → 2
         Debug.Log(selectedIndex);
+        foreach (var frame in m_selectionFrames)
+        {
+            var blink = frame.GetComponent<BlinkEffect>();
+            if (blink != null)
+                blink.enabled = true;
+        }
         SetSelectionFrame(selectedIndex); // 選ばれたキャラだけ枠を点滅させる
 
         m_commandUI.SetActive(true); // 次にコマンド選択UIを表示
@@ -113,31 +119,7 @@ public class BattleSystem : MonoBehaviour
         var blink = m_selectionFrames[selectedIndex].GetComponent<BlinkEffect>();
         if (image != null) image.color = new Color(1, 1, 1, 1); // 表示
         if (blink != null) blink.SetRender(true);              // 点滅ON
-        /*
-        var image = m_selectionFrames[selectedIndex].GetComponent<Image>();
-        var blink = m_selectionFrames[selectedIndex].GetComponent<BlinkEffect>();
-        if (image != null) image.color = new Color(1, 1, 1, 1); // 表示
-        if (blink != null) blink.enabled = true;              // 点滅ON
-        */
-
-        /*
-        for (int i = 0; i < m_selectionFrames.Count; i++)
-        {
-            var image = m_selectionFrames[i].GetComponent<Image>();
-            var blink = m_selectionFrames[i].GetComponent<BlinkEffect>();
-
-            if (i == selectedIndex)
-            {
-                if (image != null) image.color = new Color(1, 1, 1, 1); // 表示
-                if (blink != null) blink.enabled = true;              // 点滅ON
-            }
-            else
-            {
-                if (image != null) image.color = new Color(1, 1, 1, 0); // 非表示
-                if (blink != null) blink.enabled = false;              // 点滅OFF
-            }
-        }
-        */
+     
     }
 
     /// <summary>

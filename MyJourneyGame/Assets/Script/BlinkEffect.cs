@@ -11,7 +11,7 @@ public class BlinkEffect : MonoBehaviour
     public float m_speed = 2f;  // 点滅の速さ（数値が大きいと速く点滅する）
 
     private Image m_image;        // 対象のImageコンポーネント
-    private Color m_baseColor;    // 元のカラー情報（色味を保持してαのみ変更）
+    private Color m_baseColor = new Color(1, 1, 1,1);    // 元のカラー情報（色味を保持してαのみ変更）
     private bool m_initialized = false; // 初期化済みかどうかのフラグ
 
     public List<Image> m_TwoImage;

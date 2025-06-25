@@ -51,12 +51,16 @@ public class TextAdventureSystem : MonoBehaviour
     public Queue<string> m_Commands = new Queue<string>();
     [Header("左クリック待ちフラグ")]
     public bool m_WaitingForClick = false;
+    [Header("ゲームマネージャー")]
+    public GameManager m_gameManager;
 
     private bool m_IsFading = false;
     private float m_FadeDuration = 1.0f;
     private float m_FadeElapsed = 0f;
     private int m_SelectedChoiceIndex = -1;
     private Sprite m_PendingBackground = null;
+    [Header("デバッグ変数")]
+    public bool modeChange = false;
 
     void Start()
     {
@@ -97,33 +101,30 @@ public class TextAdventureSystem : MonoBehaviour
         {
             NextCommand();
         }
+
+        //デバッグ用 三項定理
+       // ChangeMode(modeChange ? true : false);
     }
 
-
-
-    /// <summary>
-    /// 外部テキストファイル（シナリオ）を読み込む処理
-    /// </summary>
-    /// <param name="filePath">ファイルパス</param>
-    /// 
-   /* void LoadScenario(string filePath)
+    //デバッグ関数 modechangeがtrueならバトルモード、falseならノーマルモード
+    public void ChangeMode(bool flag)
     {
-        if (!File.Exists(filePath))
+        if (flag)
         {
-            // ファイルが存在しない場合エラーを表示
-            Debug.LogError("シナリオファイルが見つからねぇよ!: " + filePath);
-            return;
+            currentMode = Mode.Battle;
+            m_WaitingForClick = false;
+            m_gameManager.m_storyPanel.SetActive(false);
+            m_gameManager.m_battlePanel.SetActive(true);
         }
 
-        // ファイルを1行ずつ読み込む
-        string[] lines = File.ReadAllLines(filePath);
-        foreach (string line in lines)
+        if (!flag)
         {
-            // 空行を除いてキューに追加
-            if (!string.IsNullOrWhiteSpace(line))
-                m_Commands.Enqueue(line.Trim());
+            currentMode = Mode.Normal;
+            m_WaitingForClick = true;
+            m_gameManager.m_battlePanel.SetActive(false);
+            m_gameManager.m_storyPanel.SetActive(true);
         }
-    }*/
+    }
 
     void LoadScenario(string filePath)
     {
@@ -274,6 +275,7 @@ public class TextAdventureSystem : MonoBehaviour
             FindObjectOfType<BattleSystem>().StartBattle();
             // 今のクラスでは進行ストップ
             m_WaitingForClick = false;
+            m_gameManager.m_storyPanel.SetActive(false);
         }
         #endregion
         #region "ボタン選択"
@@ -429,10 +431,14 @@ public class TextAdventureSystem : MonoBehaviour
     // これが「ExecuteCommandの外」に置くラッパー関数
     public void ContinueFromBattle()
     {
+        m_WaitingForClick = true;
+        m_gameManager.m_storyPanel.SetActive(true);
         Debug.Log("バトル終了、ストーリー再開");
         currentMode = Mode.Normal;
+
         NextCommand();
     }
+
     public void HideChoices()
     {
         foreach (Button btn in m_ChoiceButtons)
@@ -440,42 +446,6 @@ public class TextAdventureSystem : MonoBehaviour
             btn.gameObject.SetActive(false);
         }
     }
-
-    /*public void ShowChoices(string[] choices)
-    {
-        m_WaitingForClick = false;
-
-        for (int i = 0; i < m_ChoiceButtons.Count; i++)
-        {
-            if (i < choices.Length)
-            {
-                int index = i;
-                m_ChoiceButtons[i].gameObject.SetActive(true);
-                m_ChoiceButtons[i].GetComponentInChildren<Text>().text = choices[i];
-                m_ChoiceButtons[i].onClick.RemoveAllListeners();
-                m_ChoiceButtons[i].onClick.AddListener(() =>
-                {
-                    Debug.Log("選ばれた: " + choices[index]);
-                    HideChoices();
-
-                    if (currentMode == Mode.Battle)
-                    {
-                        FindObjectOfType<BattleSystem>().OnChoiceSelected(choices[index]);
-                    }
-                    else
-                    {
-                        // 通常モードの処理
-                        TextRender($"あなたは「{choices[index]}」を選びました。");
-                        m_WaitingForClick = true;
-                    }
-                });
-            }
-            else
-            {
-                m_ChoiceButtons[i].gameObject.SetActive(false);
-            }
-        }
-    }*/
 
     public void JumpToLabel(string label)
     {

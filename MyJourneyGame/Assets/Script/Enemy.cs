@@ -16,19 +16,38 @@ public class Enemy : CharacterBase
     public Image m_iconImage;
     public Sprite m_normal, m_damaged, m_lowHP;
 
+    [Header("攻撃力")]
+    public int m_attackPower;
+    public float m_addPower;
+    public int m_chageCount;
+
+
     protected override void Start()
     {
         base.Start();
+        m_skillAttack = m_attackPower;
+        m_hpSlider.interactable = false;
         UpdateUI();
     }
 
     /// <summary>
-    /// 敵の攻撃処理
+    /// 敵の攻撃処理、一応スキル判定
     /// </summary>
     public void Attack(PlayerCharacter target)
     {
-        Debug.Log("敵の攻撃！");
-        target.TakeDamage(10);
+        int damage = CalculateDamage(m_attackPower, m_addPower, m_chageCount); // ランダム補正あり
+        Debug.Log($"敵の攻撃！ → {damage} ダメージ");
+        target.TakeDamage(damage);
+    }
+
+    /// <summary>
+    /// ランダム補正付きダメージ計算
+    /// </summary>
+    private int CalculateDamage(float baseDamage, float addPower, int chargeCount)
+    {
+        float chargePower = addPower * chargeCount;
+        float randomFactor = Random.Range((baseDamage * chargePower) / 2f, baseDamage * chargePower);
+        return Mathf.RoundToInt(baseDamage + randomFactor);
     }
 
     /// <summary>
@@ -37,13 +56,22 @@ public class Enemy : CharacterBase
     public override void TakeDamage(int amount)
     {
         base.TakeDamage(amount);
-
         UpdateUI();
 
         if (m_iconImage != null)
         {
             m_iconImage.sprite = m_damaged;
-            Invoke(nameof(UpdateIconState), 0.4f);
+
+            if (m_currentHP > 0)
+            {
+                // 生存中なら通常アイコンに戻す
+                Invoke(nameof(UpdateIconState), 0.4f);
+            }
+            else
+            {
+                // 死亡時はすぐ切り替え（Invoke は無視されるので）
+                UpdateIconState();
+            }
         }
 
         if (m_currentHP <= 0)
@@ -60,6 +88,7 @@ public class Enemy : CharacterBase
     {
         if (m_hpSlider != null)
         {
+            m_hpSlider.maxValue = m_maxHP;   
             m_hpSlider.value = m_currentHP;
 
             float ratio = (float)m_currentHP / m_maxHP;
