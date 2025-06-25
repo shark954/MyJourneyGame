@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     public GameObject m_endingPanel;
     [Header("ゲーム画面")]
     public GameObject m_gamePanel;
+    [Header("ストーリー画面")]
+    public GameObject m_storyPanel;
     [Header("戦闘用UI")]
     public GameObject m_battlePanel; // 戦闘パネル全体（切替用）
     [Header("テキストシステム")]
@@ -33,6 +35,8 @@ public class GameManager : MonoBehaviour
         m_titlePanel.SetActive(true);
         m_endingPanel.SetActive(false);
         m_gamePanel.SetActive(false);
+        m_battlePanel.SetActive(false);
+        m_storyPanel.SetActive(false);
         m_adventureSystem.enabled = false;
     }
 

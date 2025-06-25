@@ -6,8 +6,6 @@ using UnityEngine;
 public class TitleManager : MonoBehaviour
 {
     public CanvasGroup m_titlePanel;         // タイトル用パネル（UI制御）
-    public GameObject m_gamePanel;           // 本編UIパネル（切替用）
-    public GameObject m_storyPanel;          // 本編UIパネル（切替用）
     public FadeInOut m_fadeScript;           // フェードスクリプト（Imageにアタッチ）
     public GameManager m_gameManager;        // ゲームマネージャー 
     public AudioSource m_titleBGM;
@@ -40,7 +38,9 @@ public class TitleManager : MonoBehaviour
         {
             // フェードアウト完了後にゲーム開始
             m_titlePanel.gameObject.SetActive(false);
-            m_gamePanel.SetActive(true);
+            m_gameManager.m_gamePanel.SetActive(true);
+
+            m_gameManager.m_storyPanel.SetActive(true);
             m_gameManager.m_adventureSystem.enabled = true;
            
 

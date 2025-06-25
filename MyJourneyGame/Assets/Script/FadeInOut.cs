@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,28 +6,29 @@ using UnityEngine.UI;
 
 public class FadeInOut : MonoBehaviour
 {
-    [Header("F‚ÍƒXƒNƒŠƒvƒg‚Åİ’è")]
+    [Header("ã‚¢ãƒ«ãƒ•ã‚¡å€¤ã€è‰²ã¯ã‚¹ã‚¯ãƒªãƒ—ãƒˆã§è¨­å®š")]
     public float m_alpha;
 
-    [Header("ƒtƒF[ƒh—p‚ÌImage")]
+    [Header("ãƒ•ã‚§ãƒ¼ãƒ‰ç”¨ã®Image")]
     public Image m_fade;
 
-   
+
     private bool m_fadeIn = false;
     private float m_fadeSpeed = 1f;
 
 
-    [Header("true:ƒtƒF[ƒhƒCƒ“,false:ƒtƒF[ƒhƒAƒEƒg")]
+    [Header("true:ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³,false:ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆ")]
     public bool m_InOut;
 
-    private bool isFading = false; // šƒtƒF[ƒh’†‚©‚Ç‚¤‚©‚ğŠÇ—‚·‚éƒtƒ‰ƒO
+    private bool isFading = false; // ãƒ•ã‚§ãƒ¼ãƒ‰ä¸­ã‹
 
-    private Action onFadeComplete; // ƒtƒF[ƒhŠ®—¹‚ÉŒÄ‚Ôˆ—
+    private Action onFadeComplete; // ãƒ•ã‚§ãƒ¼ãƒ‰ãŒçµ‚ã‚ã£ãŸã‚‰å‘¼ã³å‡ºã™
     // Start is called before the first frame update
     void Start()
     {
         m_alpha = 0f;
         ApplyAlpha();
+
     }
 
     // Update is called once per frame
@@ -80,5 +81,6 @@ public class FadeInOut : MonoBehaviour
     {
         isFading = false;
         onFadeComplete?.Invoke();
+
     }
 }

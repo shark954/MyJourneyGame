@@ -17,6 +17,10 @@ public class BlinkEffect : MonoBehaviour
     public List<Image> m_TwoImage;
     public bool m_Flag = false;
 
+    public float m_alpha;
+    private bool m_fadeIn = false;
+    private float m_fadeSpeed = 1f;
+
     /// <summary>
     /// コンポーネント初期化時にImageを取得
     /// </summary>
@@ -33,21 +37,6 @@ public class BlinkEffect : MonoBehaviour
     }
 
     /// <summary>
-    /// 有効化時に元の色を保存（αを最大にして点滅準備）
-    /// </summary>
-    void OnEnable()
-    {
-        /*
-        if (m_image != null)
-        {
-            m_baseColor = m_image.color;
-            m_baseColor.a = 1f;
-            m_initialized = true;
-        }
-        */
-    }
-
-    /// <summary>
     /// 毎フレーム、アルファ値を0〜1で変化させて点滅させる
     /// </summary>
     void Update()
@@ -58,8 +47,9 @@ public class BlinkEffect : MonoBehaviour
         Color newColor = m_baseColor;
         if (m_Flag)
         {
+            DoFade();
             // α値を0〜1の間で繰り返す
-            float alpha = (Mathf.Sin(Time.time * m_speed) + 1f) / 2f;
+            float alpha = m_alpha;
 
             // 元の色にαだけ反映
             newColor.a = alpha;
@@ -72,18 +62,25 @@ public class BlinkEffect : MonoBehaviour
         m_image.color = newColor;
     }
 
-    /// <summary>
-    /// 無効化されたときにαを最大に戻す（次回有効化時の見た目リセット用）
-    /// </summary>
-    void OnDisable()
+    public void DoFade()
     {
-        /*
-        if (m_image != null)
+        if (m_fadeIn)
         {
-            Color reset = m_image.color;
-            reset.a = 1f;
-            m_image.color = reset;
+            m_alpha -= Time.deltaTime * m_fadeSpeed;
+            if (m_alpha <= 0f)
+            {
+                m_alpha = 0f;
+                m_fadeIn = !m_fadeIn;
+            }
         }
-        */
+        else
+        {
+            m_alpha += Time.deltaTime * m_fadeSpeed;
+            if (m_alpha >= 1f)
+            {
+                m_alpha = 1f;
+                m_fadeIn = !m_fadeIn;
+            }
+        }
     }
 }
