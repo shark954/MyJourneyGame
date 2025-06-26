@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +10,12 @@ using UnityEngine.UI;
 /// </summary>
 public class BattleSystem : MonoBehaviour
 {
+    public List<Enemy> m_enemies;
+    public List<PlayerCharacter> m_players;
+
+    public TextMeshProUGUI m_TurnText;
+
+    private int m_currentTurn = 0;
     // UI要素
     public GameObject m_battleUI;         // 戦闘全体UI（ON/OFFでバトルの表示制御）
     public GameObject m_characterUI;      // キャラクター選択UI（複数キャラボタンなど）
@@ -119,7 +127,7 @@ public class BattleSystem : MonoBehaviour
         var blink = m_selectionFrames[selectedIndex].GetComponent<BlinkEffect>();
         if (image != null) image.color = new Color(1, 1, 1, 1); // 表示
         if (blink != null) blink.SetRender(true);              // 点滅ON
-     
+
     }
 
     /// <summary>
@@ -135,6 +143,44 @@ public class BattleSystem : MonoBehaviour
             if (blink != null) blink.enabled = false;
         }
     }
+
+
+    public void EndPlayerTurn()
+    {
+        StartCoroutine(EnemyTurnRoutine());
+    }
+
+    private IEnumerator EnemyTurnRoutine()
+    {
+        m_TurnText.text = "敵のターン";
+
+        foreach (var enemy in m_enemies)
+        {
+            if (enemy.gameObject.activeSelf)
+            {
+                var target = SelectRandomPlayer();
+                if (target != null)
+                {
+                    enemy.Attack(target);
+                    yield return new WaitForSeconds(1.0f); // 少し間を置く
+                }
+            }
+        }
+
+
+        Debug.Log("プレイヤーのターンに戻る");
+        // プレイヤーのターン開始（必要な処理をここに）
+        m_TurnText.text = "プレイヤーのターン";
+    }
+
+    private PlayerCharacter SelectRandomPlayer()
+    {
+        var alivePlayers = m_players.FindAll(p => p.m_currentHP > 0);
+        if (alivePlayers.Count == 0) return null;
+        return alivePlayers[Random.Range(0, alivePlayers.Count)];
+    }
+
+
 
     /// <summary>
     /// バトル終了時にUIを非表示＆点滅解除。ストーリーに戻る。

@@ -44,6 +44,7 @@ public class PlayerCharacter : CharacterBase
     /// </summary>
     public void Attack(CharacterBase target)
     {
+        if (m_currentHP <= 0) return; // 死亡中は行動できない
         int damage = CalculateDamage(m_nomalAttack, m_addPower, m_chageCount); // addPower=1, chargeCount=1 と仮定
         Debug.Log($"{m_characterName} の攻撃！ → {damage} ダメージ");
         target.TakeDamage(damage);
@@ -56,10 +57,32 @@ public class PlayerCharacter : CharacterBase
     {
         if (m_currentSP >= 5)
         {
-            int damage = CalculateDamage(m_skillAttack, 1.5f, 2); // 仮にスキルは強めに設定
+            int damage = CalculateDamage(m_skillAttack, 1.5f, 2);
             Debug.Log($"{m_characterName} のスキル発動！ → {damage} ダメージ");
             m_currentSP -= 5;
             target.TakeDamage(damage);
+
+            if (target is Enemy enemy)
+            {
+                float rand = Random.value;
+
+                if (rand < 0.2f)
+                {
+                    enemy.ApplyStatusEffect("poison");
+                    Debug.Log("毒状態を付与！");
+                }
+                else if (rand < 0.35f)
+                {
+                    enemy.ApplyStatusEffect("burn");
+                    Debug.Log("火傷状態を付与！");
+                }
+                else if (rand < 0.45f)
+                {
+                    enemy.ApplyStatusEffect("freeze");
+                    Debug.Log("凍結状態を付与！");
+                }
+            }
+
             UpdateStatusDisplay();
         }
         else
@@ -108,6 +131,7 @@ public class PlayerCharacter : CharacterBase
 
     public void UpdateStatusDisplay()
     {
+        m_hpSlider.maxValue = m_maxHP;
         m_hpSlider.value = m_currentHP;
 
         float hpRatio = (float)m_currentHP / m_maxHP;

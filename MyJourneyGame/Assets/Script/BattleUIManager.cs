@@ -11,6 +11,10 @@ using UnityEngine;
 public class BattleUIManager : MonoBehaviour
 {
     public static BattleUIManager m_Instance; // シングルトン（他クラスからアクセス用）
+    public List<Enemy> m_enemies;
+    public List<PlayerCharacter> m_players;
+
+    private int m_currentTurn = 0;
 
     private PlayerCharacter m_currentPlayer; // 現在操作中のプレイヤーキャラ
     private PlayerCharacter m_attacker;      // 実際に攻撃するプレイヤー
@@ -73,6 +77,8 @@ public class BattleUIManager : MonoBehaviour
 
         m_attacker.Attack(m_selectedTarget);
         m_attackChoicePanel.SetActive(false);
+
+        FindObjectOfType<BattleSystem>().EndPlayerTurn(); // ←ここで敵ターンへ
     }
 
     /// <summary>
@@ -88,7 +94,10 @@ public class BattleUIManager : MonoBehaviour
 
         m_attacker.UseSkill(m_selectedTarget);
         m_attackChoicePanel.SetActive(false);
+
+        FindObjectOfType<BattleSystem>().EndPlayerTurn(); // ←ここで敵ターンへ
     }
+
 
     /// <summary>
     /// 現在の行動キャラ（プレイヤー）を指定する
@@ -98,4 +107,25 @@ public class BattleUIManager : MonoBehaviour
         m_attacker = pc;
     }
 
+
+
+    private void EnemyCounterAttack()
+    {
+        Debug.Log("反撃処理開始");
+
+        var alivePlayers = m_allPlayers.FindAll(p => p.m_currentHP > 0);
+
+        if (alivePlayers.Count == 0 || m_selectedTarget == null)
+        {
+            Debug.Log("反撃対象がいない");
+            return;
+        }
+
+        var randomPlayer = alivePlayers[Random.Range(0, alivePlayers.Count)];
+        Debug.Log($"敵が {randomPlayer.m_characterName} に反撃！");
+        m_selectedTarget.Attack(randomPlayer);
+    }
 }
+
+
+
