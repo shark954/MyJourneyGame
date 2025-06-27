@@ -7,7 +7,8 @@ using UnityEngine.UI;
 /// </summary>
 public class PlayerCharacter : CharacterBase
 {
-   
+    public GameObject m_disabledOverlay; // 黒の半透明UIをアタッチする
+
     [Header("UI 表示")]
     public TextMeshProUGUI m_spText, m_nameText;
     public GameObject m_selectionFrame;
@@ -16,10 +17,12 @@ public class PlayerCharacter : CharacterBase
     [Header("表情スプライト")]
     public Image m_iconImage;
 
-
     protected override void Start()
     {
         base.Start();
+
+        if (m_disabledOverlay != null)
+            m_disabledOverlay.SetActive(false);
 
         if (m_data != null)
         {
@@ -108,6 +111,19 @@ public class PlayerCharacter : CharacterBase
                 m_iconImage.sprite = m_data.m_iconLowHP;
             else
                 m_iconImage.sprite = m_data.m_iconNormal;
+        }
+    }
+
+    public void RefreshStatus()
+    {
+        if (m_currentHP > 0)
+        {
+            m_selectionFrame.SetActive(true); // 点滅フレームは生存時のみ
+        }
+        else
+        {
+            if (m_disabledOverlay != null)
+                m_disabledOverlay.SetActive(false); // 黒フェードUIの切り替え
         }
     }
 }

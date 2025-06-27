@@ -35,11 +35,26 @@ public class BattleSystem : MonoBehaviour
         InitSelectionFrames(); // 枠全て透明＆点滅OFF
         Debug.Log("バトル開始！");
 
+        foreach (var player in BattleUIManager.m_Instance.m_players)
+        {
+            player.ResetStatus();
+            player.UpdateStatusDisplay();
+        }
+
+        foreach (var enemy in BattleUIManager.m_Instance.m_enemies)
+        {
+            enemy.ResetStatus();
+            enemy.UpdateUI();
+        }
+
+
         // UI表示制御
         m_battleUI.SetActive(true);
         m_characterUI.SetActive(true);
         m_commandUI.SetActive(false);
         m_actionUI.SetActive(false);
+
+
     }
 
     /// <summary>

@@ -103,7 +103,7 @@ public class TextAdventureSystem : MonoBehaviour
         }
 
         //デバッグ用 三項定理
-        ChangeMode(modeChange ? true : false);
+       // ChangeMode(modeChange ? true : false);
     }
 
     //デバッグ関数 modechangeがtrueならバトルモード、falseならノーマルモード

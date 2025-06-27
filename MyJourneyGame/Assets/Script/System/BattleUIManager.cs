@@ -46,13 +46,19 @@ public class BattleUIManager : MonoBehaviour
     /// </summary>
     public void OnPlayerCharacterSelected(PlayerCharacter player)
     {
+        if (player.m_currentHP <= 0)
+        {
+            Debug.Log("このキャラは行動不能です");
+            return;
+        }
+
         foreach (var pc in m_allPlayers)
         {
             bool isSelected = (pc == player);
-            pc.SetSelected(isSelected); // 選択キャラだけ点滅＋アイコン変更
+            pc.SetSelected(isSelected);
         }
 
-        SetCurrentAttacker(player); // クリックされたキャラを攻撃者に設定
+        SetCurrentAttacker(player);
     }
 
     /// <summary>
@@ -124,6 +130,14 @@ public class BattleUIManager : MonoBehaviour
         var randomPlayer = alivePlayers[Random.Range(0, alivePlayers.Count)];
         Debug.Log($"敵が {randomPlayer.m_data.m_characterName} に反撃！");
         m_selectedTarget.Attack(randomPlayer);
+    }
+
+    private void UpdateAllPlayerStatus()
+    {
+        foreach (var pc in m_allPlayers)
+        {
+            pc.RefreshStatus();
+        }
     }
 }
 

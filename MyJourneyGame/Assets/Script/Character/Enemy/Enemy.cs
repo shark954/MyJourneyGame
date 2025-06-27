@@ -101,7 +101,7 @@ public class Enemy : CharacterBase
     /// <summary>
     /// 現在のHP・名前に応じてUI更新
     /// </summary>
-    private void UpdateUI()
+    public void UpdateUI()
     {
         if (m_hpSlider != null)
         {
