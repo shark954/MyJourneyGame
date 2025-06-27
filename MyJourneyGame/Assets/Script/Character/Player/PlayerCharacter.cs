@@ -24,8 +24,9 @@ public class PlayerCharacter : CharacterBase
     public int m_nomal;
     public int m_skill;
 
-    public float m_addPower;
-    public int m_chageCount;
+    public float m_addPowerMin;
+    public float m_addPowerMax;
+    
 
     /// <summary>
     /// 初期化処理（HP/SPなど）
@@ -45,7 +46,8 @@ public class PlayerCharacter : CharacterBase
     public void Attack(CharacterBase target)
     {
         if (m_currentHP <= 0) return; // 死亡中は行動できない
-        int damage = CalculateDamage(m_nomalAttack, m_addPower, m_chageCount); // addPower=1, chargeCount=1 と仮定
+        float randomMultiplier = Random.Range(m_addPowerMin, m_addPowerMax);
+        int damage = Mathf.RoundToInt(m_nomalAttack * randomMultiplier);
         Debug.Log($"{m_characterName} の攻撃！ → {damage} ダメージ");
         target.TakeDamage(damage);
     }
@@ -57,7 +59,8 @@ public class PlayerCharacter : CharacterBase
     {
         if (m_currentSP >= 5)
         {
-            int damage = CalculateDamage(m_skillAttack, 1.5f, 2);
+            float randomMultiplier = Random.Range(m_addPowerMin, m_addPowerMax);
+            int damage = Mathf.RoundToInt(m_skillAttack * randomMultiplier);
             Debug.Log($"{m_characterName} のスキル発動！ → {damage} ダメージ");
             m_currentSP -= 5;
             target.TakeDamage(damage);

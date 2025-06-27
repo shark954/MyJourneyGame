@@ -2008,11 +2008,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
     m_HighlightedColor: {r: 1, g: 0, b: 0, a: 0.5882353}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0}
     m_SelectedColor: {r: 1, g: 0, b: 0, a: 0.5882353}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -2203,8 +2203,8 @@ MonoBehaviour:
   m_lowHP: {fileID: 21300000, guid: 6537f7fe1d91f8844863a0af1db16d8a, type: 3}
   m_nomal: 20
   m_skill: 30
-  m_addPower: 0
-  m_chageCount: 0
+  m_addPowerMin: 0
+  m_addPowerMax: 0
 --- !u!114 &427109242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2793,8 +2793,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 32b23beab8183b247b62bca159a841d4, type: 2}
+  m_sharedMaterial: {fileID: 6826988199281000598, guid: 32b23beab8183b247b62bca159a841d4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3541,8 +3541,8 @@ MonoBehaviour:
   m_lowHP: {fileID: 21300000, guid: 9cb4c1f4b6e5eb7448f2e7bcd1758d57, type: 3}
   m_nomal: 15
   m_skill: 30
-  m_addPower: 0
-  m_chageCount: 0
+  m_addPowerMin: 0
+  m_addPowerMax: 0
 --- !u!114 &630089924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3953,7 +3953,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d4b54ff6a2d000f45b25b401b812a872, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3996,7 +3996,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 360813781fe78b84294060be9585ba4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_characterName: "\u653F\u6728\u967D\u5411"
+  m_characterName: 
   m_maxHP: 1000
   m_currentHP: 0
   m_maxSP: 300
@@ -4010,9 +4010,10 @@ MonoBehaviour:
   m_normal: {fileID: 21300000, guid: d4b54ff6a2d000f45b25b401b812a872, type: 3}
   m_damaged: {fileID: 21300000, guid: 723d067d55c179b46a7643c6129f4c3d, type: 3}
   m_lowHP: {fileID: 21300000, guid: 361bc06c0e43ed547b22f1800e3d6370, type: 3}
-  m_attackPower: 50
-  m_addPower: 0
-  m_chageCount: 0
+  m_basePower: 0
+  m_addPowerMin: 0
+  m_addPowerMax: 0
+  m_enemyData: {fileID: 0}
 --- !u!1 &743530633
 GameObject:
   m_ObjectHideFlags: 0
@@ -6770,8 +6771,8 @@ MonoBehaviour:
   m_lowHP: {fileID: 21300000, guid: 9853721e8c18e9f4696a2e5b545fbd8b, type: 3}
   m_nomal: 20
   m_skill: 40
-  m_addPower: 0
-  m_chageCount: 0
+  m_addPowerMin: 0
+  m_addPowerMax: 0
 --- !u!114 &1469680396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7306,8 +7307,8 @@ MonoBehaviour:
   m_lowHP: {fileID: 21300000, guid: d48c2468585001f4687590e49b4dd6ac, type: 3}
   m_nomal: 10
   m_skill: 25
-  m_addPower: 0
-  m_chageCount: 0
+  m_addPowerMin: 0
+  m_addPowerMax: 0
 --- !u!114 &1575459071
 MonoBehaviour:
   m_ObjectHideFlags: 0

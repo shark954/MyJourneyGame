@@ -20,15 +20,32 @@ public class Enemy : CharacterBase
 
 
     [Header("攻撃力")]
-    public int m_attackPower;
-    public float m_addPower;
-    public int m_chageCount;
+    public int m_basePower;
+    public float m_addPowerMin;
+    public float m_addPowerMax;
+
+    public EnemyData m_enemyData; // ← インスペクターで設定
+
 
 
     protected override void Start()
     {
+        if (m_enemyData != null)
+        {
+            m_characterName = m_enemyData.m_enemyName;
+            m_maxHP = m_enemyData.m_maxHP;
+            m_currentHP = m_maxHP;
+            m_basePower = m_enemyData.m_basePower;
+            m_addPowerMin = m_enemyData.m_addPowerMin;
+            m_addPowerMax = m_enemyData.m_addPowerMax;
+            m_normal = m_enemyData.m_iconNormal;
+            m_damaged = m_enemyData.m_iconDamaged;
+            m_lowHP = m_enemyData.m_iconLowHP;
+        }
+
         base.Start();
-        m_skillAttack = m_attackPower;
+        m_iconImage.sprite = m_enemyData.m_iconNormal;
+        m_skillAttack = m_basePower;
         m_hpSlider.interactable = false;
         UpdateUI();
     }
@@ -45,7 +62,8 @@ public class Enemy : CharacterBase
     public void Attack(PlayerCharacter target)
     {
         if (m_currentHP <= 0) return; // 死亡中は行動できない
-        int damage = CalculateDamage(m_skillAttack, m_addPower, m_chageCount); // ランダム補正あり
+        float randomMultiplier = Random.Range(m_addPowerMin,m_addPowerMax);
+        int damage = Mathf.RoundToInt(m_basePower * randomMultiplier);
         Debug.Log($"damage ダメージ");
         target.TakeDamage(damage);
     }
