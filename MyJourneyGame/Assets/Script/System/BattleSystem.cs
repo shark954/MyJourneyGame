@@ -103,6 +103,11 @@ public class BattleSystem : MonoBehaviour
             m_commandUI.SetActive(false);
             m_actionUI.SetActive(true);
         }
+
+        if(command == "“¦‚°‚é")
+        {
+            EndBattle();
+        }
     }
 
     /// <summary>
