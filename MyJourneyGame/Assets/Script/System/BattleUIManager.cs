@@ -122,7 +122,7 @@ public class BattleUIManager : MonoBehaviour
         }
 
         var randomPlayer = alivePlayers[Random.Range(0, alivePlayers.Count)];
-        Debug.Log($"“G‚ª {randomPlayer.m_characterName} ‚É”½Œ‚I");
+        Debug.Log($"“G‚ª {randomPlayer.m_data.m_characterName} ‚É”½Œ‚I");
         m_selectedTarget.Attack(randomPlayer);
     }
 }

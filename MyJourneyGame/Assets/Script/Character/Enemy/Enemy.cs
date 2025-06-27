@@ -7,6 +7,7 @@ using TMPro;  // TextMeshPro 用
 /// </summary>
 public class Enemy : CharacterBase
 {
+
     [Header("UI表示")]
     public TextMeshProUGUI m_nameText;
     public Slider m_hpSlider;
@@ -19,33 +20,20 @@ public class Enemy : CharacterBase
     private int m_effectTurns = 0;
 
 
-    [Header("攻撃力")]
-    public int m_basePower;
-    public float m_addPowerMin;
-    public float m_addPowerMax;
-
-    public EnemyData m_enemyData; // ← インスペクターで設定
+    
 
 
 
     protected override void Start()
     {
-        if (m_enemyData != null)
+        if (m_data != null)
         {
-            m_characterName = m_enemyData.m_enemyName;
-            m_maxHP = m_enemyData.m_maxHP;
-            m_currentHP = m_maxHP;
-            m_basePower = m_enemyData.m_basePower;
-            m_addPowerMin = m_enemyData.m_addPowerMin;
-            m_addPowerMax = m_enemyData.m_addPowerMax;
-            m_normal = m_enemyData.m_iconNormal;
-            m_damaged = m_enemyData.m_iconDamaged;
-            m_lowHP = m_enemyData.m_iconLowHP;
+            m_currentSP = m_data.m_maxSP;
+            m_currentHP = m_data.m_maxHP;
         }
 
         base.Start();
-        m_iconImage.sprite = m_enemyData.m_iconNormal;
-        m_skillAttack = m_basePower;
+        m_iconImage.sprite = m_data.m_iconNormal;
         m_hpSlider.interactable = false;
         UpdateUI();
     }
@@ -62,8 +50,9 @@ public class Enemy : CharacterBase
     public void Attack(PlayerCharacter target)
     {
         if (m_currentHP <= 0) return; // 死亡中は行動できない
-        float randomMultiplier = Random.Range(m_addPowerMin,m_addPowerMax);
-        int damage = Mathf.RoundToInt(m_basePower * randomMultiplier);
+        float randomMultiplier = Random.Range(m_data.m_addPowerMin,m_data.m_addPowerMax);
+        int damage = Mathf.RoundToInt(m_data.m_skillAttack * randomMultiplier);
+        m_iconImage.sprite = m_data.m_iconAttack;
         Debug.Log($"damage ダメージ");
         target.TakeDamage(damage);
     }
@@ -88,7 +77,7 @@ public class Enemy : CharacterBase
 
         if (m_iconImage != null)
         {
-            m_iconImage.sprite = m_damaged;
+            m_iconImage.sprite = m_data.m_iconDamaged;
 
             if (m_currentHP > 0)
             {
@@ -116,10 +105,10 @@ public class Enemy : CharacterBase
     {
         if (m_hpSlider != null)
         {
-            m_hpSlider.maxValue = m_maxHP;   
+            m_hpSlider.maxValue = m_data.m_maxHP;   
             m_hpSlider.value = m_currentHP;
 
-            float ratio = (float)m_currentHP / m_maxHP;
+            float ratio = (float)m_currentHP / m_data.m_maxHP;
             if (m_hpFillImage != null)
                 m_hpFillImage.color = ratio <= 0.3f ? Color.red :
                                       ratio <= 0.6f ? Color.yellow :
@@ -127,7 +116,7 @@ public class Enemy : CharacterBase
         }
 
         if (m_nameText != null)
-            m_nameText.text = m_characterName;
+            m_nameText.text = m_data.m_characterName;
     }
 
     /// <summary>
@@ -137,7 +126,7 @@ public class Enemy : CharacterBase
     {
         if (m_iconImage == null) return;
 
-        m_iconImage.sprite = m_currentHP <= m_maxHP * 0.3f ? m_lowHP : m_normal;
+        m_iconImage.sprite = m_currentHP <= m_data.m_maxHP * 0.3f ? m_data.m_iconLowHP : m_data.m_iconNormal;
     }
 
     public void UpdateTurn()

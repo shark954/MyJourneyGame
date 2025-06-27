@@ -2,129 +2,86 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-
 /// <summary>
-/// プレイヤー専用のステータスと処理
+/// プレイヤー専用のステータスと処理（CharacterData を利用）
 /// </summary>
 public class PlayerCharacter : CharacterBase
 {
+   
     [Header("UI 表示")]
-    //public Text m_hpText;
-    public TextMeshProUGUI m_spText,m_nameText;
-
+    public TextMeshProUGUI m_spText, m_nameText;
     public GameObject m_selectionFrame;
     public Slider m_hpSlider;
-    public Image m_hpFillImage; // ← Sliderの Fill に割り当てる
 
     [Header("表情スプライト")]
     public Image m_iconImage;
-    public Sprite m_normal, m_selected, m_damaged, m_lowHP;
 
-    [Header("攻撃力、通常・スキル")]
-    public int m_nomal;
-    public int m_skill;
 
-    public float m_addPowerMin;
-    public float m_addPowerMax;
-    
-
-    /// <summary>
-    /// 初期化処理（HP/SPなど）
-    /// </summary>
     protected override void Start()
     {
         base.Start();
+
+        if (m_data != null)
+        {
+            m_currentHP = m_data.m_maxHP;
+            m_currentSP = m_data.m_maxSP;
+        }
+
         m_hpSlider.interactable = false;
-        m_nomalAttack = m_nomal;
-        m_skillAttack = m_skill;
         UpdateStatusDisplay();
     }
 
-    /// <summary>
-    /// 通常攻撃
-    /// </summary>
     public void Attack(CharacterBase target)
     {
-        if (m_currentHP <= 0) return; // 死亡中は行動できない
-        float randomMultiplier = Random.Range(m_addPowerMin, m_addPowerMax);
-        int damage = Mathf.RoundToInt(m_nomalAttack * randomMultiplier);
-        Debug.Log($"{m_characterName} の攻撃！ → {damage} ダメージ");
+        if (m_currentHP <= 0) return;
+        float randomMultiplier = Random.Range(m_data.m_addPowerMin, m_data.m_addPowerMax);
+        int damage = Mathf.RoundToInt(m_data.m_normalAttack * randomMultiplier);
+        Debug.Log($"{m_data.m_characterName} の攻撃！ → {damage} ダメージ");
         target.TakeDamage(damage);
+        m_iconImage.sprite = m_data.m_iconAttack;
     }
 
-    /// <summary>
-    /// スキル攻撃
-    /// </summary>
     public void UseSkill(CharacterBase target)
     {
         if (m_currentSP >= 5)
         {
-            float randomMultiplier = Random.Range(m_addPowerMin, m_addPowerMax);
-            int damage = Mathf.RoundToInt(m_skillAttack * randomMultiplier);
-            Debug.Log($"{m_characterName} のスキル発動！ → {damage} ダメージ");
+            float randomMultiplier = Random.Range(m_data.m_addPowerMin, m_data.m_addPowerMax);
+            int damage = Mathf.RoundToInt(m_data.m_skillAttack * randomMultiplier);
+            m_iconImage.sprite = m_data.m_iconAttack;
+            Debug.Log($"{m_data.m_characterName} のスキル発動！ → {damage} ダメージ");
             m_currentSP -= 5;
             target.TakeDamage(damage);
 
             if (target is Enemy enemy)
             {
                 float rand = Random.value;
-
-                if (rand < 0.2f)
-                {
-                    enemy.ApplyStatusEffect("poison");
-                    Debug.Log("毒状態を付与！");
-                }
-                else if (rand < 0.35f)
-                {
-                    enemy.ApplyStatusEffect("burn");
-                    Debug.Log("火傷状態を付与！");
-                }
-                else if (rand < 0.45f)
-                {
-                    enemy.ApplyStatusEffect("freeze");
-                    Debug.Log("凍結状態を付与！");
-                }
+                if (rand < 0.2f) enemy.ApplyStatusEffect("poison");
+                else if (rand < 0.35f) enemy.ApplyStatusEffect("burn");
+                else if (rand < 0.45f) enemy.ApplyStatusEffect("freeze");
             }
 
             UpdateStatusDisplay();
         }
         else
         {
-            Debug.Log($"{m_characterName} は SP が足りない！");
+            Debug.Log($"{m_data.m_characterName} は SP が足りない！");
         }
     }
 
-
-    /// <summary>
-    /// ダメージの計算処理
-    /// </summary>
-    private int CalculateDamage(float baseDamage, float addPower, int chargeCount)
-    {
-        float chargePower = addPower * chargeCount;
-        float randomFactor = Random.Range((baseDamage * chargePower) / 2f, baseDamage * chargePower);
-        return Mathf.RoundToInt(baseDamage + randomFactor);
-    }
-
-    /// <summary>
-    /// キャラ選択時の状態変更（点滅＋アイコン）
-    /// </summary>
     public void SetSelected(bool selected)
     {
         m_selectionFrame.SetActive(selected);
-        SetStateIcon(selected ? "selected" : "normal");
+        UpdateStatusDisplay();
+        if (selected && m_iconImage) m_iconImage.sprite = m_data.m_iconSelected;
     }
 
-    /// <summary>
-    /// ダメージを受けた時の処理と見た目変化
-    /// </summary>
     public override void TakeDamage(int amount)
     {
         base.TakeDamage(amount);
-
         if (m_iconImage != null)
         {
-            m_iconImage.sprite = m_damaged;
-            Invoke(nameof(UpdateStatusDisplay), 0.4f); //ダメージ後に状態を戻す
+            m_iconImage.sprite = m_data.m_iconDamaged;
+            Invoke(nameof(UpdateStatusDisplay), 0.4f);
         }
         else
         {
@@ -134,37 +91,23 @@ public class PlayerCharacter : CharacterBase
 
     public void UpdateStatusDisplay()
     {
-        m_hpSlider.maxValue = m_maxHP;
+        m_hpSlider.maxValue = m_data.m_maxHP;
         m_hpSlider.value = m_currentHP;
 
-        float hpRatio = (float)m_currentHP / m_maxHP;
-        Color color = hpRatio <= 0.3f ? Color.red : hpRatio <= 0.6f ? Color.yellow : Color.green;
-        m_hpSlider.fillRect.GetComponent<Image>().color = color;
-        m_spText.text = $"SP: {m_currentSP}/{m_maxSP}";
-        m_nameText.text = m_characterName;
+        float hpRatio = (float)m_currentHP / m_data.m_maxHP;
+        m_hpSlider.fillRect.GetComponent<Image>().color =
+            hpRatio <= 0.3f ? Color.red :
+            hpRatio <= 0.6f ? Color.yellow : Color.green;
 
-        //HPの割合に応じてアイコン変更
-        if (hpRatio <= 0.3f)
-        {
-            m_iconImage.sprite = m_lowHP;
-        }
-        else
-        {
-            m_iconImage.sprite = m_normal;
-        }
-    }
+        m_spText.text = $"SP: {m_currentSP}/{m_data.m_maxSP}";
+        m_nameText.text = m_data.m_characterName;
 
-    /// <summary>
-    /// 状態に応じたアイコン変更
-    /// </summary>
-    public void SetStateIcon(string state)
-    {
-        switch (state)
+        if (m_iconImage != null)
         {
-            case "normal": m_iconImage.sprite = m_normal; break;
-            case "selected": m_iconImage.sprite = m_selected; break;
-            case "damaged": m_iconImage.sprite = m_damaged; break;
-            case "low": m_iconImage.sprite = m_lowHP; break;
+            if (hpRatio <= 0.3f)
+                m_iconImage.sprite = m_data.m_iconLowHP;
+            else
+                m_iconImage.sprite = m_data.m_iconNormal;
         }
     }
 }

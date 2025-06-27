@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b3b90268129f48458e99bd44210a5fa, type: 3}
+  m_Name: Character2
+  m_EditorClassIdentifier: 
+  m_characterName: "\u8056\u8077\u8005"
+  m_maxHP: 200
+  m_maxSP: 60
+  m_normalAttack: 15
+  m_skillAttack: 30
+  m_addPowerMin: 0.7
+  m_addPowerMax: 1
+  m_iconNormal: {fileID: 21300000, guid: e4f93fdd7ca99b448a06a5216f47509d, type: 3}
+  m_iconAttack: {fileID: 21300000, guid: b5f1e05fa357398498616526e720323b, type: 3}
+  m_iconLowHP: {fileID: 21300000, guid: d48c2468585001f4687590e49b4dd6ac, type: 3}
+  m_iconDamaged: {fileID: 21300000, guid: 0ae1e581d12266a48a1a3deba87c5424, type: 3}
+  m_iconSelected: {fileID: 21300000, guid: 577e10194bbccff4982d2747bade65ca, type: 3}
