@@ -1981,13 +1981,13 @@ MonoBehaviour:
   m_data: {fileID: 11400000, guid: 3f77f27b5043e57499e635a7fc065175, type: 2}
   m_currentHP: 0
   m_currentSP: 0
+  m_deathFlag: 0
   m_disabledOverlay: {fileID: 1134310955}
   m_spText: {fileID: 630797685}
   m_nameText: {fileID: 211087532}
   m_selectionFrame: {fileID: 54317103}
   m_hpSlider: {fileID: 1052996904}
   m_iconImage: {fileID: 427109239}
-  m_deathflag: 0
 --- !u!114 &427109242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2712,7 +2712,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u65C5\u306E\u5411\u304B\u3046\u5148\u3078"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 32b23beab8183b247b62bca159a841d4, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 73efd110800510942a8bc409055d4711, type: 2}
   m_sharedMaterial: {fileID: 6826988199281000598, guid: 32b23beab8183b247b62bca159a841d4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2776,7 +2776,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &552007906
@@ -3312,13 +3312,13 @@ MonoBehaviour:
   m_data: {fileID: 11400000, guid: 61955aac5e19da443b0dde83ada1cd9d, type: 2}
   m_currentHP: 0
   m_currentSP: 0
+  m_deathFlag: 0
   m_disabledOverlay: {fileID: 812522685}
   m_spText: {fileID: 196377737}
   m_nameText: {fileID: 1134617775}
   m_selectionFrame: {fileID: 2121504766}
   m_hpSlider: {fileID: 1647655084}
   m_iconImage: {fileID: 630089921}
-  m_deathflag: 0
 --- !u!114 &630089924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4104,7 +4104,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 32b23beab8183b247b62bca159a841d4, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 73efd110800510942a8bc409055d4711, type: 2}
   m_sharedMaterial: {fileID: 6826988199281000598, guid: 32b23beab8183b247b62bca159a841d4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4168,7 +4168,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!95 &871290200
@@ -6786,13 +6786,13 @@ MonoBehaviour:
   m_data: {fileID: 11400000, guid: 49fe58e849734d84c86bc479b2ac18a8, type: 2}
   m_currentHP: 0
   m_currentSP: 0
+  m_deathFlag: 0
   m_disabledOverlay: {fileID: 2138824345}
   m_spText: {fileID: 994896768}
   m_nameText: {fileID: 907564900}
   m_selectionFrame: {fileID: 94597835}
   m_hpSlider: {fileID: 482252106}
   m_iconImage: {fileID: 1469680393}
-  m_deathflag: 0
 --- !u!114 &1469680396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7200,13 +7200,13 @@ MonoBehaviour:
   m_data: {fileID: 11400000, guid: 685e389ad1a344240a49867c2c330b26, type: 2}
   m_currentHP: 0
   m_currentSP: 0
+  m_deathFlag: 0
   m_disabledOverlay: {fileID: 906735092}
   m_spText: {fileID: 1361749718}
   m_nameText: {fileID: 1518510997}
   m_selectionFrame: {fileID: 599440896}
   m_hpSlider: {fileID: 115364825}
   m_iconImage: {fileID: 1575459068}
-  m_deathflag: 0
 --- !u!114 &1575459071
 MonoBehaviour:
   m_ObjectHideFlags: 0

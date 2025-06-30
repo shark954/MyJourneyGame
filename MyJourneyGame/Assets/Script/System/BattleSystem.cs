@@ -1,12 +1,12 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// ƒVƒiƒŠƒI“àƒoƒgƒ‹‚ÌŠÈˆÕˆ—‚ğs‚¤ŠÇ—ƒNƒ‰ƒXB
-/// ƒLƒƒƒ‰‘I‘ğ ¨ ƒRƒ}ƒ“ƒh‘I‘ğ ¨ ƒAƒNƒVƒ‡ƒ“ ¨ I—¹‚Ü‚Å‚ğ§ŒäB
+/// ã‚·ãƒŠãƒªã‚ªå†…ãƒãƒˆãƒ«ã®ç°¡æ˜“å‡¦ç†ã‚’è¡Œã†ç®¡ç†ã‚¯ãƒ©ã‚¹ã€‚
+/// ã‚­ãƒ£ãƒ©é¸æŠ â†’ ã‚³ãƒãƒ³ãƒ‰é¸æŠ â†’ ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ â†’ çµ‚äº†ã¾ã§ã‚’åˆ¶å¾¡ã€‚
 /// </summary>
 public class BattleSystem : MonoBehaviour
 {
@@ -15,45 +15,43 @@ public class BattleSystem : MonoBehaviour
 
     public TextMeshProUGUI m_TurnText;
     public GameManager m_gameManager;
-    public List<string> m_enemyPrefabNames; // —á: "EnemyGoblin", "EnemySlime"
+    public List<string> m_enemyPrefabNames; // ä¾‹: "EnemyGoblin", "EnemySlime"
     public Transform m_enemySpawnPoint = null;
 
     private int m_currentTurn = 0;
-    // UI—v‘f
-    public GameObject m_battleUI;         // í“¬‘S‘ÌUIiON/OFF‚Åƒoƒgƒ‹‚Ì•\¦§Œäj
-    public GameObject m_characterUI;      // ƒLƒƒƒ‰ƒNƒ^[‘I‘ğUIi•¡”ƒLƒƒƒ‰ƒ{ƒ^ƒ“‚È‚Çj
-    public GameObject m_commandUI;        // ƒRƒ}ƒ“ƒh‘I‘ğUIiUŒ‚A–hŒä‚È‚Çj
-    public GameObject m_actionUI;         // s“®‘I‘ğUIi’ÊíUŒ‚AƒXƒLƒ‹‚È‚Çj
-    public List<GameObject> m_selectionFrames; // ŠeƒLƒƒƒ‰‚Ì”’”wŒii‘I‘ğ˜gA“_–Å—pj
+    // UIè¦ç´ 
+    public GameObject m_battleUI;         // æˆ¦é—˜å…¨ä½“UIï¼ˆON/OFFã§ãƒãƒˆãƒ«ã®è¡¨ç¤ºåˆ¶å¾¡ï¼‰
+    public GameObject m_characterUI;      // ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼é¸æŠUIï¼ˆè¤‡æ•°ã‚­ãƒ£ãƒ©ãƒœã‚¿ãƒ³ãªã©ï¼‰
+    public GameObject m_commandUI;        // ã‚³ãƒãƒ³ãƒ‰é¸æŠUIï¼ˆæ”»æ’ƒã€é˜²å¾¡ãªã©ï¼‰
+    public GameObject m_actionUI;         // è¡Œå‹•é¸æŠUIï¼ˆé€šå¸¸æ”»æ’ƒã€ã‚¹ã‚­ãƒ«ãªã©ï¼‰
+    public List<GameObject> m_selectionFrames; // å„ã‚­ãƒ£ãƒ©ã®ç™½èƒŒæ™¯ï¼ˆé¸æŠæ ã€ç‚¹æ»…ç”¨ï¼‰
 
-    // ‘I‘ğ’†î•ñ
-    private string m_selectedCharacterName = ""; // Œ»İ‘I‘ğ‚³‚ê‚Ä‚¢‚éƒLƒƒƒ‰–¼
-    private string m_selectedCommand = "";       // Œ»İ‘I‘ğ’†‚ÌƒRƒ}ƒ“ƒh“à—e
+    // é¸æŠä¸­æƒ…å ±
+    private string m_selectedCharacterName = ""; // ç¾åœ¨é¸æŠã•ã‚Œã¦ã„ã‚‹ã‚­ãƒ£ãƒ©å
+    private string m_selectedCommand = "";       // ç¾åœ¨é¸æŠä¸­ã®ã‚³ãƒãƒ³ãƒ‰å†…å®¹
 
     public bool m_escape;
 
     /// <summary>
-    /// ƒoƒgƒ‹ŠJn‚ÉÀsBUI‰Šú‰»‚â˜gƒŠƒZƒbƒg‚È‚ÇB
+    /// ãƒãƒˆãƒ«é–‹å§‹æ™‚ã«å®Ÿè¡Œã€‚UIåˆæœŸåŒ–ã‚„æ ãƒªã‚»ãƒƒãƒˆãªã©ã€‚
     /// </summary>
     public void StartBattle()
     {
-        InitSelectionFrames(); // ˜g‘S‚Ä“§–¾•“_–ÅOFF
-        Debug.Log("ƒoƒgƒ‹ŠJnI");
+        InitSelectionFrames(); // æ å…¨ã¦é€æ˜ï¼†ç‚¹æ»…OFF
+        Debug.Log("ãƒãƒˆãƒ«é–‹å§‹ï¼");
 
         foreach (var player in BattleUIManager.m_Instance.m_players)
         {
             player.ResetStatus();
-            player.UpdateStatusDisplay();
         }
 
         foreach (var enemy in BattleUIManager.m_Instance.m_enemies)
         {
             enemy.ResetStatus();
-            enemy.UpdateUI();
         }
 
 
-        // UI•\¦§Œä
+        // UIè¡¨ç¤ºåˆ¶å¾¡
         m_battleUI.SetActive(true);
         m_characterUI.SetActive(true);
         m_commandUI.SetActive(false);
@@ -63,12 +61,12 @@ public class BattleSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒLƒƒƒ‰‚ª‘I‘ğ‚³‚ê‚½‚Æ‚«‚ÉÀsiƒ{ƒ^ƒ“‚©‚ç•¶š—ñ‚Å“n‚³‚ê‚éj
+    /// ã‚­ãƒ£ãƒ©ãŒé¸æŠã•ã‚ŒãŸã¨ãã«å®Ÿè¡Œï¼ˆãƒœã‚¿ãƒ³ã‹ã‚‰æ–‡å­—åˆ—ã§æ¸¡ã•ã‚Œã‚‹ï¼‰
     /// </summary>
     public void OnCharacterSelected(string charaName)
     {
         m_selectedCharacterName = charaName;
-        int selectedIndex = ExtractIndexFromName(charaName); // "Character2" ¨ 2
+        int selectedIndex = ExtractIndexFromName(charaName); // "Character2" â†’ 2
         Debug.Log(selectedIndex);
         foreach (var frame in m_selectionFrames)
         {
@@ -76,13 +74,13 @@ public class BattleSystem : MonoBehaviour
             if (blink != null)
                 blink.enabled = true;
         }
-        SetSelectionFrame(selectedIndex); // ‘I‚Î‚ê‚½ƒLƒƒƒ‰‚¾‚¯˜g‚ğ“_–Å‚³‚¹‚é
+        SetSelectionFrame(selectedIndex); // é¸ã°ã‚ŒãŸã‚­ãƒ£ãƒ©ã ã‘æ ã‚’ç‚¹æ»…ã•ã›ã‚‹
 
-        m_commandUI.SetActive(true); // Ÿ‚ÉƒRƒ}ƒ“ƒh‘I‘ğUI‚ğ•\¦
+        m_commandUI.SetActive(true); // æ¬¡ã«ã‚³ãƒãƒ³ãƒ‰é¸æŠUIã‚’è¡¨ç¤º
     }
 
     /// <summary>
-    /// ƒLƒƒƒ‰–¼‚©‚çƒCƒ“ƒfƒbƒNƒX‚ğæ“¾i––”ö‚Ì”šj
+    /// ã‚­ãƒ£ãƒ©åã‹ã‚‰ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’å–å¾—ï¼ˆæœ«å°¾ã®æ•°å­—ï¼‰
     /// </summary>
     private int ExtractIndexFromName(string name)
     {
@@ -92,24 +90,24 @@ public class BattleSystem : MonoBehaviour
             if (int.TryParse(num, out int result))
                 return result;
         }
-        return 0; // ƒfƒtƒHƒ‹ƒg‚Íæ“ªƒLƒƒƒ‰
+        return 0; // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯å…ˆé ­ã‚­ãƒ£ãƒ©
     }
 
     /// <summary>
-    /// ƒRƒ}ƒ“ƒhiUŒ‚‚È‚Çj‚ª‘I‘ğ‚³‚ê‚½‚Æ‚«‚ÉÀs
+    /// ã‚³ãƒãƒ³ãƒ‰ï¼ˆæ”»æ’ƒãªã©ï¼‰ãŒé¸æŠã•ã‚ŒãŸã¨ãã«å®Ÿè¡Œ
     /// </summary>
     public void OnCommandSelected(string command)
     {
-        Debug.Log("‘I‘ğƒRƒ}ƒ“ƒh: " + command);
+        Debug.Log("é¸æŠã‚³ãƒãƒ³ãƒ‰: " + command);
         m_selectedCommand = command;
 
-        if (command == "UŒ‚")
+        if (command == "æ”»æ’ƒ")
         {
             m_commandUI.SetActive(false);
             m_actionUI.SetActive(true);
         }
 
-        if(command == "“¦‚°‚é")
+        if (command == "é€ƒã’ã‚‹")
         {
             m_escape = true;
             EndBattle(true);
@@ -117,19 +115,19 @@ public class BattleSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÛ‚Ìs“®i’ÊíUŒ‚EƒXƒLƒ‹‚È‚Çj‚ª‘I‚Î‚ê‚½‚Æ‚«‚Ìˆ—
+    /// å®Ÿéš›ã®è¡Œå‹•ï¼ˆé€šå¸¸æ”»æ’ƒãƒ»ã‚¹ã‚­ãƒ«ãªã©ï¼‰ãŒé¸ã°ã‚ŒãŸã¨ãã®å‡¦ç†
     /// </summary>
   /*  public void OnActionConfirmed(string action)
     {
-        Debug.Log($"{m_selectedCharacterName} ‚Ì {action} ÀsI");
+        Debug.Log($"{m_selectedCharacterName} ã® {action} å®Ÿè¡Œï¼");
 
-        // ÀÛ‚Ìs“®ˆ—‚È‚Ç‚ğ‘}“üi“GHP‚ğŒ¸‚ç‚·‚È‚Çj
+        // å®Ÿéš›ã®è¡Œå‹•å‡¦ç†ãªã©ã‚’æŒ¿å…¥ï¼ˆæ•µHPã‚’æ¸›ã‚‰ã™ãªã©ï¼‰
 
-        StopAllSelectionFrameBlink(); // ‘I‘ğƒLƒƒƒ‰‚Ì˜g“_–Å‚ğ‰ğœiƒ^[ƒ“I—¹j
+        StopAllSelectionFrameBlink(); // é¸æŠã‚­ãƒ£ãƒ©ã®æ ç‚¹æ»…ã‚’è§£é™¤ï¼ˆã‚¿ãƒ¼ãƒ³çµ‚äº†ï¼‰
     }*/
 
     /// <summary>
-    /// ‚·‚×‚Ä‚Ì‘I‘ğ˜g‚ğ“§–¾{“_–ÅOFF‚É‚·‚é
+    /// ã™ã¹ã¦ã®é¸æŠæ ã‚’é€æ˜ï¼‹ç‚¹æ»…OFFã«ã™ã‚‹
     /// </summary>
     private void StopAllSelectionFrameBlink()
     {
@@ -144,20 +142,20 @@ public class BattleSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// w’è‚³‚ê‚½ƒLƒƒƒ‰‚Ì˜g‚Ì‚İ•\¦•“_–ÅA‚»‚êˆÈŠO‚Í”ñ•\¦•”ñ“_–Å
+    /// æŒ‡å®šã•ã‚ŒãŸã‚­ãƒ£ãƒ©ã®æ ã®ã¿è¡¨ç¤ºï¼†ç‚¹æ»…ã€ãã‚Œä»¥å¤–ã¯éè¡¨ç¤ºï¼†éç‚¹æ»…
     /// </summary>
     private void SetSelectionFrame(int selectedIndex)
     {
         StopAllSelectionFrameBlink();
         var image = m_selectionFrames[selectedIndex].GetComponent<Image>();
         var blink = m_selectionFrames[selectedIndex].GetComponent<BlinkEffect>();
-        if (image != null) image.color = new Color(1, 1, 1, 1); // •\¦
-        if (blink != null) blink.SetRender(true);              // “_–ÅON
+        if (image != null) image.color = new Color(1, 1, 1, 1); // è¡¨ç¤º
+        if (blink != null) blink.SetRender(true);              // ç‚¹æ»…ON
 
     }
 
     /// <summary>
-    /// Å‰‚É‚·‚×‚Ä‚ÌƒLƒƒƒ‰˜g‚ğ“§–¾•“_–ÅOFF‚É‰Šú‰»
+    /// æœ€åˆã«ã™ã¹ã¦ã®ã‚­ãƒ£ãƒ©æ ã‚’é€æ˜ï¼†ç‚¹æ»…OFFã«åˆæœŸåŒ–
     /// </summary>
     private void InitSelectionFrames()
     {
@@ -178,7 +176,7 @@ public class BattleSystem : MonoBehaviour
 
     private IEnumerator EnemyTurnRoutine()
     {
-        m_TurnText.text = "“G‚Ìƒ^[ƒ“";
+        m_TurnText.text = "æ•µã®ã‚¿ãƒ¼ãƒ³";
 
         foreach (var enemy in m_enemies)
         {
@@ -195,23 +193,23 @@ public class BattleSystem : MonoBehaviour
                     {
                         enemy.Attack(target);
                     }
-                    yield return new WaitForSeconds(1.0f);
-                }
 
-                if (target == null)
-                {
-                    m_escape = false;
-                    EndBattle(false);
+                    yield return new WaitForSeconds(1.0f);
+
+                    // ğŸ‘‡ æ”»æ’ƒå¾Œã«å…¨æ»…ãƒã‚§ãƒƒã‚¯ã‚’è¿½åŠ ï¼
+                    if (IsAllPlayersDead())
+                    {
+                        m_escape = false;
+                        EndBattle(false);
+                        yield break; // ãƒãƒˆãƒ«çµ‚äº† â†’ ã‚³ãƒ«ãƒ¼ãƒãƒ³ä¸­æ–­
+                    }
                 }
             }
         }
 
-
-        Debug.Log("ƒvƒŒƒCƒ„[‚Ìƒ^[ƒ“‚É–ß‚é");
-        // ƒvƒŒƒCƒ„[‚Ìƒ^[ƒ“ŠJni•K—v‚Èˆ—‚ğ‚±‚±‚Éj
-        m_TurnText.text = "ƒvƒŒƒCƒ„[‚Ìƒ^[ƒ“";
+        Debug.Log("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¿ãƒ¼ãƒ³ã«æˆ»ã‚‹");
+        m_TurnText.text = "ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¿ãƒ¼ãƒ³";
     }
-
     private PlayerCharacter SelectRandomPlayer()
     {
         var alivePlayers = m_players.FindAll(p => p.m_currentHP > 0);
@@ -219,15 +217,19 @@ public class BattleSystem : MonoBehaviour
         return alivePlayers[Random.Range(0, alivePlayers.Count)];
     }
 
+    private bool IsAllPlayersDead()
+    {
+        return m_players.TrueForAll(p => p.m_currentHP <= 0);
+    }
 
 
     /// <summary>
-    /// ƒoƒgƒ‹I—¹‚ÉUI‚ğ”ñ•\¦•“_–Å‰ğœBƒXƒg[ƒŠ[‚É–ß‚éB
-    /// battleWin‚ªtrue‚Åƒoƒgƒ‹‚ÉŸ—˜Afalse‚Å”s–k
+    /// ãƒãƒˆãƒ«çµ‚äº†æ™‚ã«UIã‚’éè¡¨ç¤ºï¼†ç‚¹æ»…è§£é™¤ã€‚ã‚¹ãƒˆãƒ¼ãƒªãƒ¼ã«æˆ»ã‚‹ã€‚
+    /// battleWinãŒtrueã§ãƒãƒˆãƒ«ã«å‹åˆ©ã€falseã§æ•—åŒ—
     /// </summary>
     public void EndBattle(bool battleWin)
     {
-        //ƒoƒgƒ‹‚ÉŸ—˜
+        //ãƒãƒˆãƒ«ã«å‹åˆ©
         if (battleWin && !m_escape)
         {
             m_battleUI.SetActive(false);
@@ -237,11 +239,11 @@ public class BattleSystem : MonoBehaviour
                 if (blink != null)
                     blink.enabled = false;
             }
-            m_gameManager.m_adventureSystem.ContinueFromBattle(); // ƒXƒg[ƒŠ[isÄŠJ
+            m_gameManager.m_adventureSystem.ContinueFromBattle(); // ã‚¹ãƒˆãƒ¼ãƒªãƒ¼é€²è¡Œå†é–‹
         }
 
-        //“P‘Ş
-        if(battleWin && m_escape)
+        //æ’¤é€€
+        if (battleWin && m_escape)
         {
             m_battleUI.SetActive(false);
             foreach (var frame in m_selectionFrames)
@@ -250,16 +252,16 @@ public class BattleSystem : MonoBehaviour
                 if (blink != null)
                     blink.enabled = false;
             }
-            m_gameManager.m_adventureSystem.m_DisplayText.text = "—Í‹y‚Î‚¸—EÒˆês‚Í“P‘Ş‚µ‚½";
-            m_gameManager.m_adventureSystem.ContinueFromBattle(); // ƒXƒg[ƒŠ[isÄŠJ
+            m_gameManager.m_adventureSystem.m_DisplayText.text = "åŠ›åŠã°ãšå‹‡è€…ä¸€è¡Œã¯æ’¤é€€ã—ãŸ";
+            m_gameManager.m_adventureSystem.ContinueFromBattle(); // ã‚¹ãƒˆãƒ¼ãƒªãƒ¼é€²è¡Œå†é–‹
         }
 
-        //”s–k
+        //æ•—åŒ—
         if (!battleWin && !m_escape)
         {
             m_battleUI.SetActive(false);
             m_gameManager.m_gameEnd = true;
-            m_gameManager.m_endingManager.PlayEnding("—EÒ‚Í”s–k‚µ‚½", false);
+            m_gameManager.m_endingManager.PlayEnding("å‹‡è€…ã¯æ•—åŒ—ã—ãŸ", false);
         }
     }
 }

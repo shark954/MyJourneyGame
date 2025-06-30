@@ -6,6 +6,14 @@ public class CharacterBase : MonoBehaviour
 
     public int m_currentHP;
     public int m_currentSP;
+    public bool m_deathFlag = false;
+
+    protected AudioSource m_audioSource;
+
+    protected virtual void Awake()
+    {
+        m_audioSource = gameObject.AddComponent<AudioSource>();
+    }
 
     protected virtual void Start()
     {

@@ -39,12 +39,12 @@ public class BattleUIManager : MonoBehaviour
     /// </summary>
     public void OnEnemyClicked(Enemy target)
     {
-        if (target.m_deathflag)
+        if (target.m_deathFlag)
         {
-            m_battleSystem.EndBattle(!target.m_deathflag);
+            m_battleSystem.EndBattle(!target.m_deathFlag);
         }
 
-        if (!target.m_deathflag)
+        if (!target.m_deathFlag)
         {
             m_selectedTarget = target;
             m_attackChoicePanel.SetActive(true); // 通常／スキル選択パネル表示
