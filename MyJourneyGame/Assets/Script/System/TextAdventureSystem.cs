@@ -267,8 +267,8 @@ public class TextAdventureSystem : MonoBehaviour
             NextCommand();
         }
         #endregion
-        #region "START_BATTLE"で始まる場合：バトルスタート 
-        else if (command.StartsWith("START_BATTLE"))
+        #region "START_BATTLE:"で始まる場合：バトルスタート 
+        else if (command.StartsWith("START_BATTLE:"))
         {
             // 戦闘システムを呼び出し
             currentMode = Mode.Battle;
@@ -278,7 +278,7 @@ public class TextAdventureSystem : MonoBehaviour
             m_gameManager.m_storyPanel.SetActive(false);
         }
         #endregion
-        #region "ボタン選択"
+        #region "CHOICE:"で始まる場合:ボタン選択
         else if (command.StartsWith("CHOICE:"))
         {
             // 選択肢：テキストとジャンプ先ラベルを分離して格納
