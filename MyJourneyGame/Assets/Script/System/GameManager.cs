@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.UI;
 using System;
@@ -11,7 +10,7 @@ public class GameManager : MonoBehaviour
     // === UI参照 ===
 
     public TitleManager m_titleManager; // Inspectorで接続
-
+    public BattleSystem m_battleSystem;
     public EndingManager m_endingManager; // Inspectorで接続
 
     [Header("タイトル画面")]
@@ -26,6 +25,11 @@ public class GameManager : MonoBehaviour
     public GameObject m_battlePanel; // 戦闘パネル全体（切替用）
     [Header("テキストシステム")]
     public TextAdventureSystem m_adventureSystem;
+
+    [Header("true=ゲーム終了")]
+    public bool m_gameEnd = false;
+
+    public bool m_resetFlag = false;
  
     /// <summary>
     /// ゲーム開始時に最初のシーンを表示
@@ -38,6 +42,19 @@ public class GameManager : MonoBehaviour
         m_battlePanel.SetActive(false);
         m_storyPanel.SetActive(false);
         m_adventureSystem.enabled = false;
+    }
+
+    private void Update()
+    {
+        if (m_gameEnd)
+        {
+
+            m_titlePanel.SetActive(false);
+            m_endingPanel.SetActive(true);
+            m_gamePanel.SetActive(false);
+            m_battlePanel.SetActive(false);
+            m_storyPanel.SetActive(false);
+        }
     }
 
 

@@ -68,8 +68,9 @@ public class TextAdventureSystem : MonoBehaviour
         foreach (Image Dummy in m_DisplayImage)
             Dummy.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
 
+        ResetScenario();
         // StreamingAssets内のシナリオファイルをロード
-        LoadScenario(Application.streamingAssetsPath + "/scenario.txt");
+        //LoadScenario(Application.streamingAssetsPath + "/scenario.txt");
 
         // 最初のコマンドを実行
         NextCommand();
@@ -77,6 +78,11 @@ public class TextAdventureSystem : MonoBehaviour
 
     void Update()
     {
+        if (m_gameManager.m_resetFlag)
+        {
+            ResetScenario();
+        }
+
         if (m_IsFading)
         {
             m_FadeElapsed += Time.deltaTime;
@@ -154,6 +160,13 @@ public class TextAdventureSystem : MonoBehaviour
                 m_Commands.Enqueue(line);
             }
         }
+    }
+
+    public void ResetScenario()
+    {
+        // StreamingAssets内のシナリオファイルをロード
+        LoadScenario(Application.streamingAssetsPath + "/scenario.txt");
+
     }
 
     /// <summary>
@@ -270,10 +283,51 @@ public class TextAdventureSystem : MonoBehaviour
         #region "START_BATTLE:"で始まる場合：バトルスタート 
         else if (command.StartsWith("START_BATTLE:"))
         {
-            // 戦闘システムを呼び出し
             currentMode = Mode.Battle;
-            FindObjectOfType<BattleSystem>().StartBattle();
-            // 今のクラスでは進行ストップ
+
+            // 敵名を取得（例: "EnemyGoblin"）
+            string enemyName = DataPatch(command, 13);
+            Debug.Log(enemyName);
+
+            // バトルシステム取得
+            BattleSystem battleSystem = FindObjectOfType<BattleSystem>();
+
+            // 既存の敵をすべて破棄
+            foreach (var oldEnemy in battleSystem.m_enemies)
+            {
+                if (oldEnemy != null)
+                    Destroy(oldEnemy.gameObject);
+            }
+            battleSystem.m_enemies.Clear();
+            GameObject enemyPrefab = Resources.Load<GameObject>($"Prefabs/Character/Enemy/{enemyName}");
+            if (enemyPrefab != null)
+            {
+                Debug.Log($"Enemy prefab loaded: {enemyPrefab.name}");
+
+                GameObject enemyObj = Instantiate(enemyPrefab, battleSystem.m_enemySpawnPoint.position, Quaternion.identity, battleSystem.m_enemySpawnPoint);
+                enemyObj.transform.localPosition = Vector3.zero;
+
+                Enemy newEnemy = enemyObj.GetComponentInChildren<Enemy>(); // ← Canvas構造の影響で階層下にいる可能性がある
+                if (newEnemy != null)
+                {
+                    newEnemy.ResetStatus();
+                    battleSystem.m_enemies.Add(newEnemy);
+                    BattleUIManager.m_Instance.m_enemies.Clear();
+                    BattleUIManager.m_Instance.m_enemies.Add(newEnemy);
+                }
+                else
+                {
+                    Debug.LogError("Enemy スクリプトがプレハブに見つからん！");
+                }
+            }
+            else
+            {
+                Debug.LogError($"Prefab 読み込み失敗: {enemyName}");
+            }
+
+            // バトル開始
+            battleSystem.StartBattle();
+
             m_WaitingForClick = false;
             m_gameManager.m_storyPanel.SetActive(false);
         }
@@ -431,12 +485,13 @@ public class TextAdventureSystem : MonoBehaviour
     // これが「ExecuteCommandの外」に置くラッパー関数
     public void ContinueFromBattle()
     {
-        m_WaitingForClick = true;
+        NextCommand();
         m_gameManager.m_storyPanel.SetActive(true);
+
         Debug.Log("バトル終了、ストーリー再開");
         currentMode = Mode.Normal;
+        m_WaitingForClick = true;
 
-        NextCommand();
     }
 
     public void HideChoices()

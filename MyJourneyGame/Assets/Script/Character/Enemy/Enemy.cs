@@ -19,7 +19,7 @@ public class Enemy : CharacterBase
     private string m_statusEffect = null;
     private int m_effectTurns = 0;
 
-
+    public bool m_deathflag=false;
     
 
 
@@ -47,15 +47,44 @@ public class Enemy : CharacterBase
     /// <summary>
     /// 敵の攻撃処理、一応スキル判定
     /// </summary>
-    public void Attack(PlayerCharacter target)
+    public void Attack(CharacterBase target)
     {
-        if (m_currentHP <= 0) return; // 死亡中は行動できない
-        float randomMultiplier = Random.Range(m_data.m_addPowerMin,m_data.m_addPowerMax);
-        int damage = Mathf.RoundToInt(m_data.m_skillAttack * randomMultiplier);
-        m_iconImage.sprite = m_data.m_iconAttack;
-        Debug.Log($"damage ダメージ");
+        if (m_currentHP <= 0) return;
+        float randomMultiplier = Random.Range(m_data.m_addPowerMin, m_data.m_addPowerMax);
+        int damage = Mathf.RoundToInt(m_data.m_normalAttack * randomMultiplier);
+        Debug.Log($"{m_data.m_characterName} の攻撃！ → {damage} ダメージ");
         target.TakeDamage(damage);
+        m_iconImage.sprite = m_data.m_iconAttack;
     }
+
+    public void UseSkill(CharacterBase target)
+    {
+        if (m_currentSP >= 5)
+        {
+            float randomMultiplier = Random.Range(m_data.m_addPowerMin, m_data.m_addPowerMax);
+            int damage = Mathf.RoundToInt(m_data.m_skillAttack * randomMultiplier);
+            m_iconImage.sprite = m_data.m_iconAttack;
+            Debug.Log($"{m_data.m_characterName} のスキル発動！ → {damage} ダメージ");
+            m_currentSP -= 5;
+            target.TakeDamage(damage);
+
+            if (target is Enemy enemy)
+            {
+                float rand = Random.value;
+                if (rand < 0.2f) enemy.ApplyStatusEffect("poison");
+                else if (rand < 0.35f) enemy.ApplyStatusEffect("burn");
+                else if (rand < 0.45f) enemy.ApplyStatusEffect("freeze");
+            }
+
+            UpdateUI();
+        }
+        else
+        {
+            Debug.Log($"{m_data.m_characterName} は SP が足りない！");
+        }
+    }
+
+
 
     /// <summary>
     /// ランダム補正付きダメージ計算
@@ -93,9 +122,16 @@ public class Enemy : CharacterBase
 
         if (m_currentHP <= 0)
         {
-            Debug.Log("敵を倒した！");
-            gameObject.SetActive(false);
+            Die();
         }
+    }
+
+    public void Die()
+    {
+        Debug.Log("敵を倒した！");
+        m_deathflag = true;
+        gameObject.SetActive(false);
+        BattleUIManager.m_Instance.CheckAllEnemiesDefeated();
     }
 
     /// <summary>
@@ -127,6 +163,23 @@ public class Enemy : CharacterBase
         if (m_iconImage == null) return;
 
         m_iconImage.sprite = m_currentHP <= m_data.m_maxHP * 0.3f ? m_data.m_iconLowHP : m_data.m_iconNormal;
+    }
+
+    public override void ResetStatus()
+    {
+        if (m_data != null)
+        {
+            m_currentSP = m_data.m_maxSP;
+            m_currentHP = m_data.m_maxHP;
+        }
+
+        m_statusEffect = null;
+        m_effectTurns = 0;
+        m_deathflag = false;
+        gameObject.SetActive(true);
+        m_iconImage.sprite = m_data.m_iconNormal;
+
+        UpdateUI();
     }
 
     public void UpdateTurn()

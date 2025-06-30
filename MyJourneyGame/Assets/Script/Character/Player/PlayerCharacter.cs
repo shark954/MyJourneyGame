@@ -17,6 +17,12 @@ public class PlayerCharacter : CharacterBase
     [Header("表情スプライト")]
     public Image m_iconImage;
 
+    private string m_statusEffect = null;
+    private int m_effectTurns = 0;
+
+    public bool m_deathflag = false;
+
+
     protected override void Start()
     {
         base.Start();
@@ -112,6 +118,20 @@ public class PlayerCharacter : CharacterBase
             else
                 m_iconImage.sprite = m_data.m_iconNormal;
         }
+    }
+
+    public override void ResetStatus()
+    {
+        if (m_data != null)
+        {
+            m_currentSP = m_data.m_maxSP;
+            m_currentHP = m_data.m_maxHP;
+        }
+
+       
+        m_iconImage.sprite = m_data.m_iconNormal;
+
+        UpdateStatusDisplay();
     }
 
     public void RefreshStatus()

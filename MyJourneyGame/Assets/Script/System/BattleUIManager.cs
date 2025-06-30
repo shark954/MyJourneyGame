@@ -22,6 +22,7 @@ public class BattleUIManager : MonoBehaviour
 
     public GameObject m_attackChoicePanel;   // 「通常攻撃」「スキル」ボタンを含むパネル
     public List<PlayerCharacter> m_allPlayers; // 全プレイヤーキャラ一覧（選択判定用）
+    public BattleSystem m_battleSystem;
 
     /// <summary>
     /// 初期化：攻撃コマンドパネルを非表示にする
@@ -34,11 +35,21 @@ public class BattleUIManager : MonoBehaviour
 
     /// <summary>
     /// 敵をクリックしたときに呼び出され、攻撃選択パネルを表示する
+    /// EndBattleのboolは勝ちがtrueだからEnemyの死亡フラグを反転させる
     /// </summary>
     public void OnEnemyClicked(Enemy target)
     {
-        m_selectedTarget = target;
-        m_attackChoicePanel.SetActive(true); // 通常／スキル選択パネル表示
+        if (target.m_deathflag)
+        {
+            m_battleSystem.EndBattle(!target.m_deathflag);
+        }
+
+        if (!target.m_deathflag)
+        {
+            m_selectedTarget = target;
+            m_attackChoicePanel.SetActive(true); // 通常／スキル選択パネル表示
+        }
+        
     }
 
     /// <summary>
@@ -46,6 +57,11 @@ public class BattleUIManager : MonoBehaviour
     /// </summary>
     public void OnPlayerCharacterSelected(PlayerCharacter player)
     {
+        if (!FindObjectOfType<Enemy>())
+        {
+            m_battleSystem.EndBattle(true);
+        }
+
         if (player.m_currentHP <= 0)
         {
             Debug.Log("このキャラは行動不能です");
@@ -64,11 +80,11 @@ public class BattleUIManager : MonoBehaviour
     /// <summary>
     /// 撤退ボタンが押されたときの処理
     /// </summary>
-    public void OnRetreatButtonPressed()
+    /*public void OnRetreatButtonPressed()
     {
         // BattleSystem の EndBattle を呼び出して終了処理
-        FindObjectOfType<BattleSystem>().EndBattle();
-    }
+         m_battleSystem.EndBattle();
+    }*/
 
     /// <summary>
     /// 「通常攻撃」ボタンが押されたときの処理
@@ -84,7 +100,7 @@ public class BattleUIManager : MonoBehaviour
         m_attacker.Attack(m_selectedTarget);
         m_attackChoicePanel.SetActive(false);
 
-        FindObjectOfType<BattleSystem>().EndPlayerTurn(); // ←ここで敵ターンへ
+         m_battleSystem.EndPlayerTurn(); // ←ここで敵ターンへ
     }
 
     /// <summary>
@@ -101,7 +117,7 @@ public class BattleUIManager : MonoBehaviour
         m_attacker.UseSkill(m_selectedTarget);
         m_attackChoicePanel.SetActive(false);
 
-        FindObjectOfType<BattleSystem>().EndPlayerTurn(); // ←ここで敵ターンへ
+         m_battleSystem.EndPlayerTurn(); // ←ここで敵ターンへ
     }
 
 
@@ -124,12 +140,21 @@ public class BattleUIManager : MonoBehaviour
         if (alivePlayers.Count == 0 || m_selectedTarget == null)
         {
             Debug.Log("反撃対象がいない");
+             m_battleSystem.EndPlayerTurn();
             return;
         }
 
         var randomPlayer = alivePlayers[Random.Range(0, alivePlayers.Count)];
         Debug.Log($"敵が {randomPlayer.m_data.m_characterName} に反撃！");
         m_selectedTarget.Attack(randomPlayer);
+    }
+    public void CheckAllEnemiesDefeated()
+    {
+        Enemy[] remainingEnemies = FindObjectsOfType<Enemy>();
+        if (remainingEnemies.Length == 0)
+        {
+            m_battleSystem.EndBattle(true); // 勝利判定
+        }
     }
 
     private void UpdateAllPlayerStatus()

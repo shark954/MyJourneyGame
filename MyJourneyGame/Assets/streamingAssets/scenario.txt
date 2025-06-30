@@ -1,77 +1,59 @@
-# プロローグ：村で旅立ち
-TEXT:ここはラビリンス王国。魔力と剣の均衡が崩れつつあった。
-PLAY_BGM:intro_theme
-TEXT:あなたは、運命を背負った若き勇者。
-
-SHOW_IMAGE_L:hero_f
-
-TEXT:村長「まずは東の森で試練を受けよ。真の勇者か試されるであろう」
 SHOW_BGI:forest_background
-# 森への出発
+TEXT:勇者は静かな森に足を踏み入れた。
 PLAY_BGM:forest_theme
-TEXT:森の入り口に着いた。霧が立ち込めている。
-TEXT:道が二手に分かれている……どちらへ進む？
+SHOW_IMAGE_L:hero_normal
+TEXT:「この森の奥に魔王の手下がいるらしいな…」
+SHOW_IMAGE_R:guide_smile
+TEXT:「気をつけてくださいね、勇者様」
+SHOW_IMAGE_R_CLS:
+SHOW_IMAGE_L_CLS:
 
-# CHOICE: 表示テキスト -> ジャンプ先ラベル
-CHOICE:陽の射す道->SUN_PATH|闇に包まれた道->DARK_PATH
+TEXT:森の奥から唸り声が聞こえる――！
+SHOW_BGI:battle_background
+START_BATTLE:EnemyBoss
 
-# ▼ 選択肢1: 陽の射す道へ進んだ場合
-LABEL:SUN_PATH
-TEXT:あなたは陽の道を進んだ。
+SHOW_BGI:village_background
+TEXT:戦闘後、勇者は森を抜け村へたどり着いた。
+PLAY_BGM:village_theme
+SHOW_IMAGE_L:hero_smile
+SHOW_IMAGE_R:elder_smile
+TEXT:「お疲れ様、勇者様。次は山を越えてください」
+
+CHOICE:山を越える->GoMountain|もう少し休む->StayVillage
+
+LABEL:GoMountain
+SHOW_IMAGE_L_CLS:
+SHOW_IMAGE_R_CLS:
 SHOW_BGI:mountain_background
-SHOW_IMAGE_R:slime
-TEXT:スライムが現れた！
-START_BATTLE
-TEXT:スライムを倒した！
-SHOW_IMAGE_R_CLS:
-JUMP:TRIAL_CORE  # 共通処理にジャンプ
+PLAY_BGM:mountain_theme
+TEXT:「険しい山道だが、進むしかない！」
 
-# ▼ 選択肢2: 闇の道へ進んだ場合
-LABEL:DARK_PATH
-TEXT:あなたは闇の道を慎重に進んだ。
-SHOW_BGI:ゲームオーバー
-SHOW_IMAGE_R:bat
-TEXT:コウモリの群れが襲ってきた！
-START_BATTLE
-TEXT:敵を振り払い、前へ進んだ。
-SHOW_IMAGE_R_CLS:
-JUMP:TRIAL_CORE
+TEXT:山の途中、巨大な石像が動き出した！
+SHOW_BGI:battle_background
+START_BATTLE:
 
-# ▼ 試練の中心部（分岐後に合流）
-LABEL:TRIAL_CORE
-TEXT:地面に何かが落ちている……古びた巻物だ。
-CHOICE:拾う->GET_SCROLL|無視する->IGNORE_SCROLL
+SHOW_BGI:hut_background
+TEXT:山を越えると、古びた小屋を見つけた。
+TEXT:「少しだけ休んでいこう…」
 
-LABEL:GET_SCROLL
-TEXT:巻物を開くと、魔力が身体に流れ込んだ！
-SHOW_IMAGE_S:spirit
-PLAY_BGM:magic_theme
-TEXT:精霊「その力……お前は試されている」
-SHOW_IMAGE_S_CLS:
-JUMP:MAGICIAN_APPEARS
+TEXT:突然、霊のようなものが襲いかかってきた！
+SHOW_BGI:battle_background
+START_BATTLE:
 
-LABEL:IGNORE_SCROLL
-TEXT:あなたは巻物を無視し、奥へ進んだ。
-JUMP:MAGICIAN_APPEARS
+SHOW_BGI:mountain_background
+TEXT:小屋を出てさらに進むと、騎士のような敵が立ちはだかった。
+SHOW_BGI:battle_background
+START_BATTLE:
 
-# ▼ 魔導士との遭遇（選択関係なく進む）
-LABEL:MAGICIAN_APPEARS
-SHOW_IMAGE_R:dark_mage
-TEXT:魔導士「その力、貴様にふさわしくはない！」
-PLAY_BGM:dark_theme
-TEXT:魔導士「我が弟子となれ！」
+SHOW_BGI:forest_background
+TEXT:森を抜け、ついに魔王の城の前にたどり着いた。
 
-CHOICE:従う->OBEY|拒む->REFUSE
+TEXT:「ここが終点だ、魔王よ！」
+SHOW_BGI:battle_background
+START_BATTLE:
 
-LABEL:OBEY
-TEXT:あなたは魔導士に従い、闇の道を歩んだ……
-PLAY_BGM:bad_end
-TEXT:～ バッドエンド ～
-
-LABEL:REFUSE
-TEXT:あなたは魔導士に立ち向かう覚悟を決めた！
-START_BATTLE
-TEXT:勝利の光があなたを包んだ！
-SHOW_IMAGE_R_CLS:
-PLAY_BGM:victory
-TEXT:～ ハッピーエンド ～
+SHOW_BGI:village_background
+TEXT:長い戦いの末、勇者は勝利し村へと戻った。
+PLAY_BGM:village_theme
+SHOW_IMAGE_L:hero_happy
+TEXT:「これでようやく平和が戻る――」

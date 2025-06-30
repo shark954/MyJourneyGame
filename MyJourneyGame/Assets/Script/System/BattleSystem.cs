@@ -14,6 +14,9 @@ public class BattleSystem : MonoBehaviour
     public List<PlayerCharacter> m_players;
 
     public TextMeshProUGUI m_TurnText;
+    public GameManager m_gameManager;
+    public List<string> m_enemyPrefabNames; // 例: "EnemyGoblin", "EnemySlime"
+    public Transform m_enemySpawnPoint = null;
 
     private int m_currentTurn = 0;
     // UI要素
@@ -26,6 +29,8 @@ public class BattleSystem : MonoBehaviour
     // 選択中情報
     private string m_selectedCharacterName = ""; // 現在選択されているキャラ名
     private string m_selectedCommand = "";       // 現在選択中のコマンド内容
+
+    public bool m_escape;
 
     /// <summary>
     /// バトル開始時に実行。UI初期化や枠リセットなど。
@@ -106,21 +111,22 @@ public class BattleSystem : MonoBehaviour
 
         if(command == "逃げる")
         {
-            EndBattle();
+            m_escape = true;
+            EndBattle(true);
         }
     }
 
     /// <summary>
     /// 実際の行動（通常攻撃・スキルなど）が選ばれたときの処理
     /// </summary>
-    public void OnActionConfirmed(string action)
+  /*  public void OnActionConfirmed(string action)
     {
         Debug.Log($"{m_selectedCharacterName} の {action} 実行！");
 
         // 実際の行動処理などを挿入（敵HPを減らすなど）
 
         StopAllSelectionFrameBlink(); // 選択キャラの枠点滅を解除（ターン終了）
-    }
+    }*/
 
     /// <summary>
     /// すべての選択枠を透明＋点滅OFFにする
@@ -181,8 +187,21 @@ public class BattleSystem : MonoBehaviour
                 var target = SelectRandomPlayer();
                 if (target != null)
                 {
-                    enemy.Attack(target);
-                    yield return new WaitForSeconds(1.0f); // 少し間を置く
+                    if (enemy.m_currentSP >= 5 && Random.value < 0.4f)
+                    {
+                        enemy.UseSkill(target);
+                    }
+                    else
+                    {
+                        enemy.Attack(target);
+                    }
+                    yield return new WaitForSeconds(1.0f);
+                }
+
+                if (target == null)
+                {
+                    m_escape = false;
+                    EndBattle(false);
                 }
             }
         }
@@ -204,18 +223,43 @@ public class BattleSystem : MonoBehaviour
 
     /// <summary>
     /// バトル終了時にUIを非表示＆点滅解除。ストーリーに戻る。
+    /// battleWinがtrueでバトルに勝利、falseで敗北
     /// </summary>
-    public void EndBattle()
+    public void EndBattle(bool battleWin)
     {
-        m_battleUI.SetActive(false);
-
-        foreach (var frame in m_selectionFrames)
+        //バトルに勝利
+        if (battleWin && !m_escape)
         {
-            var blink = frame.GetComponent<BlinkEffect>();
-            if (blink != null)
-                blink.enabled = false;
+            m_battleUI.SetActive(false);
+            foreach (var frame in m_selectionFrames)
+            {
+                var blink = frame.GetComponent<BlinkEffect>();
+                if (blink != null)
+                    blink.enabled = false;
+            }
+            m_gameManager.m_adventureSystem.ContinueFromBattle(); // ストーリー進行再開
         }
 
-        FindObjectOfType<TextAdventureSystem>().ContinueFromBattle(); // ストーリー進行再開
+        //撤退
+        if(battleWin && m_escape)
+        {
+            m_battleUI.SetActive(false);
+            foreach (var frame in m_selectionFrames)
+            {
+                var blink = frame.GetComponent<BlinkEffect>();
+                if (blink != null)
+                    blink.enabled = false;
+            }
+            m_gameManager.m_adventureSystem.m_DisplayText.text = "力及ばず勇者一行は撤退した";
+            m_gameManager.m_adventureSystem.ContinueFromBattle(); // ストーリー進行再開
+        }
+
+        //敗北
+        if (!battleWin && !m_escape)
+        {
+            m_battleUI.SetActive(false);
+            m_gameManager.m_gameEnd = true;
+            m_gameManager.m_endingManager.PlayEnding("勇者は敗北した", false);
+        }
     }
 }

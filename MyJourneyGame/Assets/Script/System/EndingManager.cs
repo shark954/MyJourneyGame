@@ -15,13 +15,10 @@ public class EndingManager : MonoBehaviour
     public CanvasGroup m_endingPanel;         // エンディングパネル本体（CanvasGroupでフェード可能）
     public TMP_Text m_endingText;             // 表示するメッセージ
     public Button m_returnButton;             // タイトルへ戻るボタン
+    public GameManager m_gameManager;
 
     [Header("フェード制御")]
     public FadeInOut m_fadeScript;          // 共通フェード処理スクリプト
-
-    [Header("UIパネル（切り替え用）")]
-    public GameObject m_titlePanel;           // タイトル画面パネル
-    public GameObject m_gamePanel;            // ゲーム本編パネル
 
     [Header("演出タイミング")]
     public float m_holdTime = 10f;            // メッセージの表示時間（秒）
@@ -88,12 +85,16 @@ public class EndingManager : MonoBehaviour
     /// </summary>
     private void ReturnToTitle()
     {
+        m_gameManager.m_resetFlag = true;
+
         // フェードアウト（透明→黒）→ パネル切り替え
         m_fadeScript.StartFade(false, () =>
         {
+            m_gameManager.m_gameEnd = false;
             m_endingPanel.gameObject.SetActive(false);
-            m_gamePanel.SetActive(false);
-            m_titlePanel.SetActive(true);
+            m_gameManager.m_gamePanel.SetActive(false);
+            m_gameManager.m_titlePanel.SetActive(true);
+            m_gameManager.m_resetFlag = false;
 
             // 画面が黒いままなので、再びフェードインして明るくする
             m_fadeScript.StartFade(true, null);
