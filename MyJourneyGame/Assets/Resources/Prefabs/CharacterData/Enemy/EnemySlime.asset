@@ -12,15 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b3b90268129f48458e99bd44210a5fa, type: 3}
   m_Name: EnemySlime
   m_EditorClassIdentifier: 
-  m_characterName: Goblin
-  m_maxHP: 100
+  m_skillType: 4
+  m_characterName: "\u30B9\u30E9\u30A4\u30E0"
+  m_maxHP: 120
   m_maxSP: 30
-  m_normalAttack: 0
-  m_skillAttack: 0
-  m_addPowerMin: 0
-  m_addPowerMax: 0
-  m_iconNormal: {fileID: 0}
-  m_iconAttack: {fileID: 0}
-  m_iconLowHP: {fileID: 0}
-  m_iconDamaged: {fileID: 0}
+  m_normalAttack: 15
+  m_skillAttack: 25
+  m_addPowerMin: 0.8
+  m_addPowerMax: 1.2
+  m_iconNormal: {fileID: 21300000, guid: e7ef71a3bfb98d14598c026ff5f38b77, type: 3}
+  m_iconAttack: {fileID: 21300000, guid: ffff018353dde984fa16be0a129c7c79, type: 3}
+  m_iconLowHP: {fileID: 21300000, guid: 37d06a16f9e65f7438e3ca482ba1590f, type: 3}
+  m_iconDamaged: {fileID: 21300000, guid: 5b0f8b4e986d5914eab7a05f7c2a5ff1, type: 3}
   m_iconSelected: {fileID: 0}
+  m_attackSE: {fileID: 0}
+  m_skillSE: {fileID: 0}

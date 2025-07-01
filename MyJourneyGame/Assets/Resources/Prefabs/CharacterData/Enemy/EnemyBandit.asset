@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b3b90268129f48458e99bd44210a5fa, type: 3}
+  m_Name: EnemyBandit
+  m_EditorClassIdentifier: 
+  m_skillType: 6
+  m_characterName: "\u5C71\u8CCA"
+  m_maxHP: 300
+  m_maxSP: 50
+  m_normalAttack: 35
+  m_skillAttack: 60
+  m_addPowerMin: 1
+  m_addPowerMax: 1.5
+  m_iconNormal: {fileID: 21300000, guid: 05ab231a8c9d8b3489d1de445325c57c, type: 3}
+  m_iconAttack: {fileID: 21300000, guid: e2bf613291a7f94438763a7499167d0b, type: 3}
+  m_iconLowHP: {fileID: 21300000, guid: 47f45aa10dda5de4ea1fa104d8403cf0, type: 3}
+  m_iconDamaged: {fileID: 21300000, guid: 36363883aca0b2d4da4a8fb3dbc93e71, type: 3}
+  m_iconSelected: {fileID: 0}
+  m_attackSE: {fileID: 0}
+  m_skillSE: {fileID: 0}

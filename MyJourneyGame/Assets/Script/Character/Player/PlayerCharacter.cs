@@ -4,25 +4,24 @@ using UnityEngine.UI;
 using static CharacterData;
 
 /// <summary>
-/// プレイヤー専用のステータスと処理（CharacterData を利用）
+/// プレイヤー専用のキャラクタークラス（表示やスキル処理含む）
+/// CharacterBase を継承して共通処理を引き継ぐ
 /// </summary>
 public class PlayerCharacter : CharacterBase
 {
-    public GameObject m_disabledOverlay; // 黒の半透明UIをアタッチする
+    public GameObject m_disabledOverlay; // 戦闘不能時の黒ぼかしUI
 
     [Header("UI 表示")]
-    public TextMeshProUGUI m_spText, m_nameText;
-    public GameObject m_selectionFrame;
-    public Slider m_hpSlider;
+    public TextMeshProUGUI m_spText, m_nameText; // SP表示、名前表示
+    public GameObject m_selectionFrame;          // 選択フレーム（点滅枠）
+    public Slider m_hpSlider;                    // HPゲージ
 
     [Header("表情スプライト")]
-    public Image m_iconImage;
+    public Image m_iconImage; // 表情アイコンの切り替え
 
-    private string m_statusEffect = null;
-    private int m_effectTurns = 0;
-
- 
-
+    /// <summary>
+    /// 初期化（HP/SP・UI設定）
+    /// </summary>
     protected override void Start()
     {
         base.Start();
@@ -40,19 +39,26 @@ public class PlayerCharacter : CharacterBase
         UpdateStatusDisplay();
     }
 
+    /// <summary>
+    /// 通常攻撃（敵キャラにダメージ）
+    /// </summary>
     public void Attack(CharacterBase target)
     {
         if (m_currentHP <= 0) return;
+
         float multiplier = Random.Range(m_data.m_addPowerMin, m_data.m_addPowerMax);
         int damage = Mathf.RoundToInt(m_data.m_normalAttack * multiplier);
         target.TakeDamage(damage);
 
-        // ★ 効果音再生
         if (m_data.m_attackSE != null)
             m_audioSource.PlayOneShot(m_data.m_attackSE);
+
         m_iconImage.sprite = m_data.m_iconAttack;
     }
 
+    /// <summary>
+    /// スキル使用処理（タイプに応じて行動を分岐）
+    /// </summary>
     public void UseSkill(CharacterBase target)
     {
         if (m_currentSP < 5)
@@ -83,7 +89,7 @@ public class PlayerCharacter : CharacterBase
                 Debug.Log($"{m_data.m_characterName} のファイアスキル！ → {fireDamage} ダメージ");
                 break;
 
-                // 他のスキルタイプも必要に応じて追加
+                // 他スキルは必要に応じて追加
         }
 
         if (m_data.m_skillSE != null)
@@ -93,20 +99,29 @@ public class PlayerCharacter : CharacterBase
         UpdateStatusDisplay();
     }
 
+    /// <summary>
+    /// キャラが選択された時に呼ばれる（UIと表情切替）
+    /// </summary>
     public void SetSelected(bool selected)
     {
         m_selectionFrame.SetActive(selected);
         UpdateStatusDisplay();
-        if (selected && m_iconImage) m_iconImage.sprite = m_data.m_iconSelected;
+
+        if (selected && m_iconImage)
+            m_iconImage.sprite = m_data.m_iconSelected;
     }
 
+    /// <summary>
+    /// ダメージ受けた際の処理（表情更新）
+    /// </summary>
     public override void TakeDamage(int amount)
     {
         base.TakeDamage(amount);
+
         if (m_iconImage != null)
         {
             m_iconImage.sprite = m_data.m_iconDamaged;
-            Invoke(nameof(UpdateStatusDisplay), 0.4f);
+            Invoke(nameof(UpdateStatusDisplay), 0.4f); // 一瞬表情変化
         }
         else
         {
@@ -116,6 +131,9 @@ public class PlayerCharacter : CharacterBase
         RefreshStatus();
     }
 
+    /// <summary>
+    /// UI（HPゲージ、SP、表情）を更新
+    /// </summary>
     public void UpdateStatusDisplay()
     {
         m_hpSlider.maxValue = m_data.m_maxHP;
@@ -131,13 +149,15 @@ public class PlayerCharacter : CharacterBase
 
         if (m_iconImage != null)
         {
-            if (hpRatio <= 0.3f)
-                m_iconImage.sprite = m_data.m_iconLowHP;
-            else
-                m_iconImage.sprite = m_data.m_iconNormal;
+            m_iconImage.sprite = hpRatio <= 0.3f
+                ? m_data.m_iconLowHP
+                : m_data.m_iconNormal;
         }
     }
 
+    /// <summary>
+    /// 戦闘開始・再開時にHP/SPなどを全回復
+    /// </summary>
     public override void ResetStatus()
     {
         if (m_data != null)
@@ -148,24 +168,26 @@ public class PlayerCharacter : CharacterBase
 
         m_deathFlag = false;
         m_iconImage.sprite = m_data.m_iconNormal;
-
         UpdateStatusDisplay();
     }
 
+    /// <summary>
+    /// 生死状態に応じてUI切替（黒ぼかしなど）
+    /// </summary>
     public void RefreshStatus()
     {
         if (m_currentHP > 0)
         {
-            m_selectionFrame.SetActive(true); // 点滅フレームは生存時のみ
+            m_selectionFrame.SetActive(true);
             if (m_disabledOverlay != null)
-                m_disabledOverlay.SetActive(false); // 黒ぼかし非表示
+                m_disabledOverlay.SetActive(false);
         }
         else
         {
             if (m_disabledOverlay != null)
-                m_disabledOverlay.SetActive(true); // 黒フェードUIの切り替え
+                m_disabledOverlay.SetActive(true);
+
             m_deathFlag = true;
-         
         }
     }
 }

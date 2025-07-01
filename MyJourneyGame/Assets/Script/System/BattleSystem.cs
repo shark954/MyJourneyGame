@@ -5,8 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// シナリオ内バトルの簡易処理を行う管理クラス。
-/// キャラ選択 → コマンド選択 → アクション → 終了までを制御。
+/// シナリオ内バトルを制御するメインクラス。
+/// キャラ選択 → コマンド選択 → 行動処理 → 敵ターン → 勝敗判定までを担当。
 /// </summary>
 public class BattleSystem : MonoBehaviour
 {
@@ -15,72 +15,69 @@ public class BattleSystem : MonoBehaviour
 
     public TextMeshProUGUI m_TurnText;
     public GameManager m_gameManager;
-    public List<string> m_enemyPrefabNames; // 例: "EnemyGoblin", "EnemySlime"
+    public List<string> m_enemyPrefabNames; // 将来の拡張用：プレハブ名リスト
     public Transform m_enemySpawnPoint = null;
 
     private int m_currentTurn = 0;
-    // UI要素
-    public GameObject m_battleUI;         // 戦闘全体UI（ON/OFFでバトルの表示制御）
-    public GameObject m_characterUI;      // キャラクター選択UI（複数キャラボタンなど）
-    public GameObject m_commandUI;        // コマンド選択UI（攻撃、防御など）
-    public GameObject m_actionUI;         // 行動選択UI（通常攻撃、スキルなど）
-    public List<GameObject> m_selectionFrames; // 各キャラの白背景（選択枠、点滅用）
 
-    // 選択中情報
-    private string m_selectedCharacterName = ""; // 現在選択されているキャラ名
-    private string m_selectedCommand = "";       // 現在選択中のコマンド内容
+    // UI関連
+    public GameObject m_battleUI;
+    public GameObject m_characterUI;
+    public GameObject m_commandUI;
+    public GameObject m_actionUI;
+    public List<GameObject> m_selectionFrames; // 各キャラの選択枠UI
 
-    public bool m_escape;
+    // 現在の選択情報
+    private string m_selectedCharacterName = "";
+    private string m_selectedCommand = "";
+
+    public bool m_escape; // 「逃げる」判定
 
     /// <summary>
-    /// バトル開始時に実行。UI初期化や枠リセットなど。
+    /// バトル開始時の初期化処理。HP/SPのリセットやUI表示の切り替え。
     /// </summary>
     public void StartBattle()
     {
-        InitSelectionFrames(); // 枠全て透明＆点滅OFF
+        InitSelectionFrames();
         Debug.Log("バトル開始！");
 
+        // プレイヤーと敵のステータスを初期化
         foreach (var player in BattleUIManager.m_Instance.m_players)
-        {
             player.ResetStatus();
-        }
 
         foreach (var enemy in BattleUIManager.m_Instance.m_enemies)
-        {
             enemy.ResetStatus();
-        }
 
-
-        // UI表示制御
+        // UI切り替え
         m_battleUI.SetActive(true);
         m_characterUI.SetActive(true);
         m_commandUI.SetActive(false);
         m_actionUI.SetActive(false);
-
-
     }
 
     /// <summary>
-    /// キャラが選択されたときに実行（ボタンから文字列で渡される）
+    /// キャラクター選択時に呼ばれる（ボタンイベント）
     /// </summary>
     public void OnCharacterSelected(string charaName)
     {
         m_selectedCharacterName = charaName;
-        int selectedIndex = ExtractIndexFromName(charaName); // "Character2" → 2
+        int selectedIndex = ExtractIndexFromName(charaName);
         Debug.Log(selectedIndex);
+
+        // 全選択枠の点滅を一旦ON
         foreach (var frame in m_selectionFrames)
         {
             var blink = frame.GetComponent<BlinkEffect>();
             if (blink != null)
                 blink.enabled = true;
         }
-        SetSelectionFrame(selectedIndex); // 選ばれたキャラだけ枠を点滅させる
 
-        m_commandUI.SetActive(true); // 次にコマンド選択UIを表示
+        SetSelectionFrame(selectedIndex); // 選択キャラの枠だけ点滅
+        m_commandUI.SetActive(true); // コマンドUI表示
     }
 
     /// <summary>
-    /// キャラ名からインデックスを取得（末尾の数字）
+    /// "Character1" → 1 のように末尾の番号を取得
     /// </summary>
     private int ExtractIndexFromName(string name)
     {
@@ -90,11 +87,11 @@ public class BattleSystem : MonoBehaviour
             if (int.TryParse(num, out int result))
                 return result;
         }
-        return 0; // デフォルトは先頭キャラ
+        return 0;
     }
 
     /// <summary>
-    /// コマンド（攻撃など）が選択されたときに実行
+    /// 「攻撃」や「逃げる」などのコマンド選択時に実行
     /// </summary>
     public void OnCommandSelected(string command)
     {
@@ -104,30 +101,20 @@ public class BattleSystem : MonoBehaviour
         if (command == "攻撃")
         {
             m_commandUI.SetActive(false);
-            m_actionUI.SetActive(true);
+            m_actionUI.SetActive(true); // 通常攻撃かスキルか選ぶ
         }
 
         if (command == "逃げる")
         {
             m_escape = true;
-            EndBattle(true);
+            EndBattle(true); // 勝利扱いでバトル終了
         }
     }
 
-    /// <summary>
-    /// 実際の行動（通常攻撃・スキルなど）が選ばれたときの処理
-    /// </summary>
-  /*  public void OnActionConfirmed(string action)
-    {
-        Debug.Log($"{m_selectedCharacterName} の {action} 実行！");
-
-        // 実際の行動処理などを挿入（敵HPを減らすなど）
-
-        StopAllSelectionFrameBlink(); // 選択キャラの枠点滅を解除（ターン終了）
-    }*/
+    // OnActionConfirmed はコメントアウトされていますが、行動確定処理の場所です。
 
     /// <summary>
-    /// すべての選択枠を透明＋点滅OFFにする
+    /// すべての選択枠の点滅・表示をオフに
     /// </summary>
     private void StopAllSelectionFrameBlink()
     {
@@ -136,26 +123,25 @@ public class BattleSystem : MonoBehaviour
             var image = frame.GetComponent<Image>();
             var blink = frame.GetComponent<BlinkEffect>();
 
-            if (image != null) image.color = new Color(1, 1, 1, 0);
-            if (blink != null) blink.SetRender(false);
+            if (image != null) image.color = new Color(1, 1, 1, 0); // 非表示
+            if (blink != null) blink.SetRender(false);             // 点滅OFF
         }
     }
 
     /// <summary>
-    /// 指定されたキャラの枠のみ表示＆点滅、それ以外は非表示＆非点滅
+    /// 指定キャラの枠のみ表示＆点滅ON
     /// </summary>
     private void SetSelectionFrame(int selectedIndex)
     {
         StopAllSelectionFrameBlink();
         var image = m_selectionFrames[selectedIndex].GetComponent<Image>();
         var blink = m_selectionFrames[selectedIndex].GetComponent<BlinkEffect>();
-        if (image != null) image.color = new Color(1, 1, 1, 1); // 表示
+        if (image != null) image.color = new Color(1, 1, 1, 1); // 表示ON
         if (blink != null) blink.SetRender(true);              // 点滅ON
-
     }
 
     /// <summary>
-    /// 最初にすべてのキャラ枠を透明＆点滅OFFに初期化
+    /// 全キャラ枠の初期化（非表示＆点滅OFF）
     /// </summary>
     private void InitSelectionFrames()
     {
@@ -168,12 +154,17 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// プレイヤーターン終了後、敵のターン開始処理
+    /// </summary>
     public void EndPlayerTurn()
     {
         StartCoroutine(EnemyTurnRoutine());
     }
 
+    /// <summary>
+    /// 敵のターン処理：スキルor攻撃 → 全滅チェック
+    /// </summary>
     private IEnumerator EnemyTurnRoutine()
     {
         m_TurnText.text = "敵のターン";
@@ -185,31 +176,32 @@ public class BattleSystem : MonoBehaviour
                 var target = SelectRandomPlayer();
                 if (target != null)
                 {
+                    // スキル使用確率40%、SP条件付き
                     if (enemy.m_currentSP >= 5 && Random.value < 0.4f)
-                    {
                         enemy.UseSkill(target);
-                    }
                     else
-                    {
                         enemy.Attack(target);
-                    }
 
                     yield return new WaitForSeconds(1.0f);
 
-                    // 👇 攻撃後に全滅チェックを追加！
+                    // 攻撃後に全滅判定
                     if (IsAllPlayersDead())
                     {
                         m_escape = false;
-                        EndBattle(false);
-                        yield break; // バトル終了 → コルーチン中断
+                        EndBattle(false); // 敗北
+                        yield break;
                     }
                 }
             }
         }
 
-        Debug.Log("プレイヤーのターンに戻る");
         m_TurnText.text = "プレイヤーのターン";
+        Debug.Log("プレイヤーのターンに戻る");
     }
+
+    /// <summary>
+    /// ランダムに生きているプレイヤーを選択
+    /// </summary>
     private PlayerCharacter SelectRandomPlayer()
     {
         var alivePlayers = m_players.FindAll(p => p.m_currentHP > 0);
@@ -217,46 +209,45 @@ public class BattleSystem : MonoBehaviour
         return alivePlayers[Random.Range(0, alivePlayers.Count)];
     }
 
+    /// <summary>
+    /// 全プレイヤーが死亡しているか確認
+    /// </summary>
     private bool IsAllPlayersDead()
     {
         return m_players.TrueForAll(p => p.m_currentHP <= 0);
     }
 
-
     /// <summary>
-    /// バトル終了時にUIを非表示＆点滅解除。ストーリーに戻る。
-    /// battleWinがtrueでバトルに勝利、falseで敗北
+    /// バトル終了時の処理（勝利/敗北/撤退）
     /// </summary>
     public void EndBattle(bool battleWin)
     {
-        //バトルに勝利
+        // 勝利（戦闘勝利）
         if (battleWin && !m_escape)
         {
             m_battleUI.SetActive(false);
             foreach (var frame in m_selectionFrames)
             {
                 var blink = frame.GetComponent<BlinkEffect>();
-                if (blink != null)
-                    blink.enabled = false;
+                if (blink != null) blink.enabled = false;
             }
-            m_gameManager.m_adventureSystem.ContinueFromBattle(); // ストーリー進行再開
+            m_gameManager.m_adventureSystem.ContinueFromBattle();
         }
 
-        //撤退
+        // 勝利（逃げる）
         if (battleWin && m_escape)
         {
             m_battleUI.SetActive(false);
             foreach (var frame in m_selectionFrames)
             {
                 var blink = frame.GetComponent<BlinkEffect>();
-                if (blink != null)
-                    blink.enabled = false;
+                if (blink != null) blink.enabled = false;
             }
             m_gameManager.m_adventureSystem.m_DisplayText.text = "力及ばず勇者一行は撤退した";
-            m_gameManager.m_adventureSystem.ContinueFromBattle(); // ストーリー進行再開
+            m_gameManager.m_adventureSystem.ContinueFromBattle();
         }
 
-        //敗北
+        // 敗北
         if (!battleWin && !m_escape)
         {
             m_battleUI.SetActive(false);
