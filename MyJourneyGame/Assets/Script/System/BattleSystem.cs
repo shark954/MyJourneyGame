@@ -12,6 +12,7 @@ public class BattleSystem : MonoBehaviour
 {
     public List<Enemy> m_enemies;
     public List<PlayerCharacter> m_players;
+    public AudioSource m_battleBGM; //戦闘BGM
 
     public TextMeshProUGUI m_TurnText;
     public GameManager m_gameManager;
@@ -42,17 +43,24 @@ public class BattleSystem : MonoBehaviour
         Debug.Log("バトル開始！");
 
         // プレイヤーと敵のステータスを初期化
-        foreach (var player in BattleUIManager.m_Instance.m_players)
-            player.ResetStatus();
+        foreach (PlayerCharacter player in BattleUIManager.m_Instance.m_players)
+        {
+            player.ResetStatus(); // ← 確実にオーバーライドされたほうが呼ばれる
+        }
 
-        foreach (var enemy in BattleUIManager.m_Instance.m_enemies)
-            enemy.ResetStatus();
-
+        foreach (Enemy enemy in BattleUIManager.m_Instance.m_enemies) 
+        { 
+            enemy.ResetStatus(); // ← 確実にオーバーライドされたほうが呼ばれる
+        }
         // UI切り替え
         m_battleUI.SetActive(true);
         m_characterUI.SetActive(true);
         m_commandUI.SetActive(false);
         m_actionUI.SetActive(false);
+
+        // ★ BGM再生
+        if (m_battleBGM != null && !m_battleBGM.isPlaying)
+            m_battleBGM.Play();
     }
 
     /// <summary>
@@ -222,6 +230,10 @@ public class BattleSystem : MonoBehaviour
     /// </summary>
     public void EndBattle(bool battleWin)
     {
+
+        if (m_battleBGM != null && m_battleBGM.isPlaying)
+            m_battleBGM.Stop();
+
         // 勝利（戦闘勝利）
         if (battleWin && !m_escape)
         {

@@ -53,6 +53,9 @@ public class TextAdventureSystem : MonoBehaviour
     public bool m_WaitingForClick = false;
     [Header("ゲームマネージャー")]
     public GameManager m_gameManager;
+    // 効果音用 
+    public AudioSource m_seAudioSource;
+
 
     private bool m_IsFading = false;
     private float m_FadeDuration = 1.0f;
@@ -178,6 +181,7 @@ public class TextAdventureSystem : MonoBehaviour
 
         if (m_Commands.Count == 0)
         {
+            m_gameManager.m_endingManager.PlayEnding("勇者たちの凱旋だ！！", true);
             // シナリオが終了した場合
             m_DisplayText.text = "シナリオ終了";
             m_WaitingForClick = false; // 待機解除
@@ -248,6 +252,14 @@ public class TextAdventureSystem : MonoBehaviour
             BackGroundMusic(DataPatch(command, 9));
             // BGM再生後は自動進行
             NextCommand();
+        }
+        #endregion
+        #region "PLAY_SE:" で始まる場合：効果音再生
+        else if (command.StartsWith("PLAY_SE:"))
+        {
+            string seName = DataPatch(command, 8);
+            PlaySoundEffect(seName);
+            NextCommand(); // 自動進行
         }
         #endregion
         #region "SHOW_IMAGE_S_CLS:" で始まる場合：画像非表示
@@ -325,6 +337,7 @@ public class TextAdventureSystem : MonoBehaviour
                 Debug.LogError($"Prefab 読み込み失敗: {enemyName}");
             }
 
+            m_BgmSource.Stop();
             // バトル開始
             battleSystem.StartBattle();
 
@@ -451,12 +464,23 @@ public class TextAdventureSystem : MonoBehaviour
         }
     }
 
-
+    void PlaySoundEffect(string seName)
+    {
+        AudioClip clip = Resources.Load<AudioClip>($"Audio/Game/{seName}");
+        if (clip != null && m_seAudioSource != null)
+        {
+            m_seAudioSource.PlayOneShot(clip);
+        }
+        else
+        {
+            Debug.LogWarning($"効果音の読み込みに失敗: {seName}");
+        }
+    }
 
     public void BackGroundMusic(string Message)
     {
         // ResourcesからBGM読み込み
-        AudioClip clip = Resources.Load<AudioClip>("Audio/" + Message);
+        AudioClip clip = Resources.Load<AudioClip>("Audio/Game/" + Message);
         if (clip != null)
         {
             //読み込んだBGMを代入
@@ -485,6 +509,7 @@ public class TextAdventureSystem : MonoBehaviour
     // これが「ExecuteCommandの外」に置くラッパー関数
     public void ContinueFromBattle()
     {
+        m_BgmSource.Play();
         NextCommand();
         m_gameManager.m_storyPanel.SetActive(true);
 

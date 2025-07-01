@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using System.Collections;
 
 /// <summary>
 /// ゲームのエンディング演出を管理（成功/失敗共通）
@@ -23,7 +24,10 @@ public class EndingManager : MonoBehaviour
     [Header("演出タイミング")]
     public float m_holdTime = 10f;            // メッセージの表示時間（秒）
 
-    public AudioSource m_endBGM;
+    public AudioSource m_audioSource;
+    public AudioClip m_clearBGM;
+    public AudioClip m_gameOverBGM;
+
 
     public Image m_clearBackground;
     public Image m_gameOverBackground;
@@ -38,6 +42,7 @@ public class EndingManager : MonoBehaviour
     {
         m_returnButton.gameObject.SetActive(false); // 最初は戻るボタン非表示
         m_returnButton.onClick.AddListener(ReturnToTitle); // ボタンのクリックイベント登録
+        
     }
 
     /// <summary>
@@ -62,7 +67,8 @@ public class EndingManager : MonoBehaviour
     /// <param name="message">表示するエンディングメッセージ</param>
     public void PlayEnding(string message, bool isClear)
     {
-
+        m_audioSource.clip = isClear ? m_clearBGM : m_gameOverBGM;
+        m_audioSource.Play();
         // メッセージを設定してパネルを表示
         m_endingText.text = message;
         m_endingPanel.alpha = 1f;
@@ -90,6 +96,7 @@ public class EndingManager : MonoBehaviour
         // フェードアウト（透明→黒）→ パネル切り替え
         m_fadeScript.StartFade(false, () =>
         {
+            m_audioSource.Stop();
             m_gameManager.m_gameEnd = false;
             m_endingPanel.gameObject.SetActive(false);
             m_gameManager.m_gamePanel.SetActive(false);

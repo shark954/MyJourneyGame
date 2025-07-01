@@ -61,43 +61,90 @@ public class PlayerCharacter : CharacterBase
     /// </summary>
     public void UseSkill(CharacterBase target)
     {
-        if (m_currentSP < 5)
-        {
-            Debug.Log($"{m_data.m_characterName} は SP が足りない！");
-            return;
-        }
+        if (m_currentSP < 5 || m_data == null || m_deathFlag) return;
 
-        m_currentSP -= 5;
+        float multiplier = Random.Range(m_data.m_addPowerMin, m_data.m_addPowerMax);
+        int baseDamage = m_data.m_skillAttack;
+        int damage;
 
         switch (m_data.m_skillType)
         {
             case SkillType.Slash:
-                int slashDamage = Mathf.RoundToInt(m_data.m_skillAttack * Random.Range(m_data.m_addPowerMin, m_data.m_addPowerMax));
-                target.TakeDamage(slashDamage);
-                Debug.Log($"{m_data.m_characterName} の斬撃！ → {slashDamage} ダメージ");
+                damage = Mathf.RoundToInt(baseDamage * multiplier);
+                target.TakeDamage(damage);
+                target.ApplyStatusEffect(StatusEffect.Bleed);
+                Debug.Log($"{m_data.m_characterName} の斬撃！ → {damage} ダメージ（出血）");
                 break;
 
-            case SkillType.Heal:
-                int healAmount = Mathf.RoundToInt(m_data.m_skillAttack * Random.Range(m_data.m_addPowerMin, m_data.m_addPowerMax));
-                m_currentHP = Mathf.Min(m_currentHP + healAmount, m_data.m_maxHP);
-                Debug.Log($"{m_data.m_characterName} は {healAmount} 回復した！");
+            case SkillType.HeavyBlow:
+                damage = Mathf.RoundToInt(baseDamage * 1.5f * multiplier);
+                target.TakeDamage(damage);
+                Debug.Log($"{m_data.m_characterName} の重撃！ → {damage} ダメージ");
+                break;
+
+            case SkillType.MultiHit:
+                for (int i = 0; i < 2; i++)
+                {
+                    damage = Mathf.RoundToInt(baseDamage * multiplier);
+                    target.TakeDamage(damage);
+                    Debug.Log($"{m_data.m_characterName} の連撃！ → {damage} ダメージ");
+                }
+                break;
+
+            case SkillType.Debuff:
+                Debug.Log($"{m_data.m_characterName} が弱体をかけた！");
+                // 弱体効果の具体的処理は別途実装
                 break;
 
             case SkillType.Fire:
-                int fireDamage = Mathf.RoundToInt(m_data.m_skillAttack * Random.Range(m_data.m_addPowerMin, m_data.m_addPowerMax));
-                target.TakeDamage(fireDamage);
-                Debug.Log($"{m_data.m_characterName} のファイアスキル！ → {fireDamage} ダメージ");
+                damage = Mathf.RoundToInt(baseDamage * 1.2f * multiplier);
+                target.TakeDamage(damage);
+                target.ApplyStatusEffect(StatusEffect.Burn);
+                Debug.Log($"{m_data.m_characterName} の炎攻撃！ → {damage} ダメージ（火傷）");
                 break;
 
-                // 他スキルは必要に応じて追加
+            case SkillType.Poison:
+                damage = Mathf.RoundToInt(baseDamage * multiplier);
+                target.TakeDamage(damage);
+                target.ApplyStatusEffect(StatusEffect.Poison);
+                Debug.Log($"{m_data.m_characterName} の毒攻撃！ → {damage} ダメージ（毒）");
+                break;
+
+            case SkillType.Shield:
+                ApplyStatusEffect(StatusEffect.Shield); // 自分にシールド付与
+                Debug.Log($"{m_data.m_characterName} はシールドを張った！");
+                break;
+
+            case SkillType.Heal:
+                if (target == null || target.m_data == null || target.m_deathFlag)
+                {
+                    Debug.Log($"{m_data.m_characterName} は回復対象がいないためスキルを無効化！");
+                    break;
+                }
+
+                int healAmount = Mathf.RoundToInt(baseDamage * multiplier);
+                target.m_currentHP = Mathf.Min(target.m_currentHP + healAmount, target.m_data.m_maxHP);
+                Debug.Log($"{m_data.m_characterName} は {target.m_data.m_characterName} を {healAmount} 回復した！");
+                if (target is PlayerCharacter player)
+                {
+                    player.UpdateStatusDisplay();
+                }
+                break;
+
+            default:
+                damage = Mathf.RoundToInt(baseDamage * multiplier);
+                target.TakeDamage(damage);
+                Debug.Log($"{m_data.m_characterName} のスキル！ → {damage} ダメージ");
+                break;
         }
 
         if (m_data.m_skillSE != null)
             m_audioSource.PlayOneShot(m_data.m_skillSE);
 
-        m_iconImage.sprite = m_data.m_iconAttack;
+        m_currentSP -= 5;
         UpdateStatusDisplay();
     }
+
 
     /// <summary>
     /// キャラが選択された時に呼ばれる（UIと表情切替）

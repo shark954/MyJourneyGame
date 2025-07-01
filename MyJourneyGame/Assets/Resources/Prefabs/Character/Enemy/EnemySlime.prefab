@@ -527,9 +527,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 360813781fe78b84294060be9585ba4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_data: {fileID: 11400000, guid: 5c206a605923d234690abc7e95f6b5be, type: 2}
+  m_data: {fileID: 11400000, guid: 4794df9f931ae1b4f81dba395699c0eb, type: 2}
   m_currentHP: 0
   m_currentSP: 0
+  m_deathFlag: 0
   m_nameText: {fileID: 5189981715727275691}
   m_hpSlider: {fileID: 5922708092535637615}
   m_hpFillImage: {fileID: 5159953726958786354}
@@ -537,7 +538,6 @@ MonoBehaviour:
   m_normal: {fileID: 0}
   m_damaged: {fileID: 0}
   m_lowHP: {fileID: 0}
-  m_deathflag: 0
 --- !u!1 &8933948600855238408
 GameObject:
   m_ObjectHideFlags: 0

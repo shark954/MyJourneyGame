@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b3b90268129f48458e99bd44210a5fa, type: 3}
   m_Name: EnemyBandit
   m_EditorClassIdentifier: 
-  m_skillType: 6
+  m_skillType: 7
   m_characterName: "\u5C71\u8CCA"
   m_maxHP: 300
   m_maxSP: 50
@@ -25,5 +25,5 @@ MonoBehaviour:
   m_iconLowHP: {fileID: 21300000, guid: 47f45aa10dda5de4ea1fa104d8403cf0, type: 3}
   m_iconDamaged: {fileID: 21300000, guid: 36363883aca0b2d4da4a8fb3dbc93e71, type: 3}
   m_iconSelected: {fileID: 0}
-  m_attackSE: {fileID: 0}
-  m_skillSE: {fileID: 0}
+  m_attackSE: {fileID: 8300000, guid: 8fc154754d89df94e9a3effbbb6be405, type: 3}
+  m_skillSE: {fileID: 8300000, guid: 09112024f5762854d9fb0c9422da60c9, type: 3}

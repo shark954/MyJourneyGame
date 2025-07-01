@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b3b90268129f48458e99bd44210a5fa, type: 3}
   m_Name: EnemySlime
   m_EditorClassIdentifier: 
-  m_skillType: 4
+  m_skillType: 1
   m_characterName: "\u30B9\u30E9\u30A4\u30E0"
   m_maxHP: 120
   m_maxSP: 30
@@ -25,5 +25,5 @@ MonoBehaviour:
   m_iconLowHP: {fileID: 21300000, guid: 37d06a16f9e65f7438e3ca482ba1590f, type: 3}
   m_iconDamaged: {fileID: 21300000, guid: 5b0f8b4e986d5914eab7a05f7c2a5ff1, type: 3}
   m_iconSelected: {fileID: 0}
-  m_attackSE: {fileID: 0}
-  m_skillSE: {fileID: 0}
+  m_attackSE: {fileID: 8300000, guid: 8fc154754d89df94e9a3effbbb6be405, type: 3}
+  m_skillSE: {fileID: 8300000, guid: 8fc154754d89df94e9a3effbbb6be405, type: 3}

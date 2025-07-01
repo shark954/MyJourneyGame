@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b3b90268129f48458e99bd44210a5fa, type: 3}
   m_Name: Character2
   m_EditorClassIdentifier: 
+  m_skillType: 3
   m_characterName: "\u8056\u8077\u8005"
   m_maxHP: 200
   m_maxSP: 60
@@ -24,3 +25,5 @@ MonoBehaviour:
   m_iconLowHP: {fileID: 21300000, guid: d48c2468585001f4687590e49b4dd6ac, type: 3}
   m_iconDamaged: {fileID: 21300000, guid: 0ae1e581d12266a48a1a3deba87c5424, type: 3}
   m_iconSelected: {fileID: 21300000, guid: 577e10194bbccff4982d2747bade65ca, type: 3}
+  m_attackSE: {fileID: 8300000, guid: 8fc154754d89df94e9a3effbbb6be405, type: 3}
+  m_skillSE: {fileID: 8300000, guid: 3e503d17091a766458d0b7a3d7765c9c, type: 3}

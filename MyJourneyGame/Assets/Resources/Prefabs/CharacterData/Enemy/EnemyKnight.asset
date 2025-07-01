@@ -12,18 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b3b90268129f48458e99bd44210a5fa, type: 3}
   m_Name: EnemyKnight
   m_EditorClassIdentifier: 
-  m_skillType: 0
+  m_skillType: 6
   m_characterName: "\u5815\u3061\u305F\u9A0E\u58EB"
-  m_maxHP: 100
+  m_maxHP: 400
   m_maxSP: 30
-  m_normalAttack: 0
-  m_skillAttack: 0
-  m_addPowerMin: 0
-  m_addPowerMax: 0
+  m_normalAttack: 25
+  m_skillAttack: 60
+  m_addPowerMin: 0.9
+  m_addPowerMax: 1.4
   m_iconNormal: {fileID: 21300000, guid: c0896d68da6fe0045ae19a45fec17dbf, type: 3}
   m_iconAttack: {fileID: 21300000, guid: faeda2757af43bd4cbd182929701127a, type: 3}
   m_iconLowHP: {fileID: 21300000, guid: 232b6b3dd23b2e645a391191543914e8, type: 3}
   m_iconDamaged: {fileID: 21300000, guid: bac97b478d13c9f4e9afc76360ecd936, type: 3}
   m_iconSelected: {fileID: 0}
-  m_attackSE: {fileID: 0}
-  m_skillSE: {fileID: 0}
+  m_attackSE: {fileID: 8300000, guid: 8fc154754d89df94e9a3effbbb6be405, type: 3}
+  m_skillSE: {fileID: 8300000, guid: 766a3cbf0ea48f147b30b0b79093dbf2, type: 3}

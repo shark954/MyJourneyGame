@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// タイトル画面の演出と開始操作を管理（FadeInOut スクリプト使用版）
@@ -10,9 +11,16 @@ public class TitleManager : MonoBehaviour
     public GameManager m_gameManager;        // ゲームマネージャー 
     public AudioSource m_titleBGM;
 
+
     private bool m_gameStarted = false;      // 遷移完了フラグ
     private float m_waitTime = 1f;           // フェードアウト待ち時間
     private float m_timer = 0f;
+
+    private void Start()
+    {
+        if (m_titleBGM != null)
+            m_titleBGM.Play();
+    }
 
     void Update()
     {
@@ -36,6 +44,7 @@ public class TitleManager : MonoBehaviour
     {
         m_fadeScript.StartFade(false, () =>
         {
+            m_titleBGM.Stop();
             // フェードアウト完了後にゲーム開始
             m_titlePanel.gameObject.SetActive(false);
             m_gameManager.m_gamePanel.SetActive(true);
