@@ -21,15 +21,16 @@ public class Enemy : CharacterBase
     /// <summary>
     /// ‰Šú‰»ˆ—iHP/SP‚Ìİ’è‚ÆUI‰Šú‰»j
     /// </summary>
-    protected override void Start()
+    protected override void Awake()
     {
+        base.Awake();
+
         if (m_data != null)
         {
             m_currentSP = m_data.m_maxSP;
             m_currentHP = m_data.m_maxHP;
         }
 
-        base.Start();
         m_iconImage.sprite = m_data.m_iconNormal;
         m_hpSlider.interactable = false;
         UpdateUI();

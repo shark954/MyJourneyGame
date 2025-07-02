@@ -38,13 +38,6 @@ public class CharacterBase : MonoBehaviour
     protected virtual void Awake()
     {
         m_audioSource = gameObject.AddComponent<AudioSource>();
-    }
-
-    /// <summary>
-    /// HP・SP 初期化（キャラデータから取得）
-    /// </summary>
-    protected virtual void Start()
-    {
         if (m_data != null)
         {
             m_currentHP = m_data.m_maxHP;

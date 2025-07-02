@@ -65,5 +65,12 @@ public class GameManager : MonoBehaviour
             m_battlePanel.SetActive(false);
             m_storyPanel.SetActive(false);
         }
+
+        if (m_resetFlag)
+        {
+            m_adventureSystem.ResetScenario();  // シナリオを再ロード
+            m_resetFlag = false;                // フラグを戻す
+        }
+
     }
 }

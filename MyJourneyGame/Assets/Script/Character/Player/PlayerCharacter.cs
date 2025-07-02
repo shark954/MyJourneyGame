@@ -22,9 +22,9 @@ public class PlayerCharacter : CharacterBase
     /// <summary>
     /// 初期化（HP/SP・UI設定）
     /// </summary>
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
 
         if (m_disabledOverlay != null)
             m_disabledOverlay.SetActive(false);
@@ -207,6 +207,8 @@ public class PlayerCharacter : CharacterBase
     /// </summary>
     public override void ResetStatus()
     {
+        Debug.Log($"{name} ResetStatus 実行, m_data = {(m_data != null)}");
+
         if (m_data != null)
         {
             m_currentSP = m_data.m_maxSP;
@@ -214,9 +216,13 @@ public class PlayerCharacter : CharacterBase
         }
 
         m_deathFlag = false;
-        m_iconImage.sprite = m_data.m_iconNormal;
+
+        if (m_iconImage != null)
+            m_iconImage.sprite = m_data?.m_iconNormal;
+
         UpdateStatusDisplay();
     }
+
 
     /// <summary>
     /// 生死状態に応じてUI切替（黒ぼかしなど）

@@ -101,6 +101,7 @@ public class EndingManager : MonoBehaviour
             m_endingPanel.gameObject.SetActive(false);
             m_gameManager.m_gamePanel.SetActive(false);
             m_gameManager.m_titlePanel.SetActive(true);
+            m_gameManager.m_titleManager.m_titleBGM.Play();
             m_gameManager.m_resetFlag = false;
 
             // 画面が黒いままなので、再びフェードインして明るくする

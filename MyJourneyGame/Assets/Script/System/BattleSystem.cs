@@ -43,12 +43,12 @@ public class BattleSystem : MonoBehaviour
         Debug.Log("バトル開始！");
 
         // プレイヤーと敵のステータスを初期化
-        foreach (PlayerCharacter player in BattleUIManager.m_Instance.m_players)
+        foreach (PlayerCharacter player in m_players)
         {
             player.ResetStatus(); // ← 確実にオーバーライドされたほうが呼ばれる
         }
 
-        foreach (Enemy enemy in BattleUIManager.m_Instance.m_enemies) 
+        foreach (Enemy enemy in m_enemies) 
         { 
             enemy.ResetStatus(); // ← 確実にオーバーライドされたほうが呼ばれる
         }

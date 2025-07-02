@@ -64,6 +64,10 @@ public class TextAdventureSystem : MonoBehaviour
     private Sprite m_PendingBackground = null;
     [Header("デバッグ変数")]
     public bool modeChange = false;
+    // 状態管理用の変数（Reset時などに必要）
+    private string m_currentCommand = "";
+    private Queue<string> m_CommandsBackup; // 任意：必要であれば使う
+
 
     void Start()
     {
@@ -167,10 +171,15 @@ public class TextAdventureSystem : MonoBehaviour
 
     public void ResetScenario()
     {
-        // StreamingAssets内のシナリオファイルをロード
         LoadScenario(Application.streamingAssetsPath + "/scenario.txt");
 
+        currentMode = Mode.Normal;         // モードを通常に
+        m_currentCommand = "";             // 実行中コマンドをクリア
+        m_WaitingForClick = false;         // 待機状態を解除
+
+        NextCommand(); // 再生開始
     }
+
 
     /// <summary>
     /// 次のコマンドをキューから取り出し、実行
