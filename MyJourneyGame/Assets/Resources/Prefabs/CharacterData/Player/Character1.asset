@@ -17,7 +17,7 @@ MonoBehaviour:
   m_maxHP: 500
   m_maxSP: 25
   m_normalAttack: 30
-  m_skillAttack: 60
+  m_skillAttack: 100
   m_addPowerMin: 0.9
   m_addPowerMax: 1.3
   m_iconNormal: {fileID: 21300000, guid: 89d5e848d25c05c4c896055c631c4e01, type: 3}

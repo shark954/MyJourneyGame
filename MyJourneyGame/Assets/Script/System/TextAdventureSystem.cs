@@ -333,8 +333,11 @@ public class TextAdventureSystem : MonoBehaviour
                 {
                     newEnemy.ResetStatus();
                     battleSystem.m_enemies.Add(newEnemy);
-                    BattleUIManager.m_Instance.m_enemies.Clear();
-                    BattleUIManager.m_Instance.m_enemies.Add(newEnemy);
+                    /*BattleUIManager.m_Instance.m_enemies.Clear();
+                    BattleUIManager.m_Instance.m_enemies.Add(newEnemy);*/
+
+                    BattleUIManager.m_Instance.m_battleSystem.m_enemies.Clear();
+                    BattleUIManager.m_Instance.m_battleSystem.m_enemies.Add(newEnemy);
                 }
                 else
                 {

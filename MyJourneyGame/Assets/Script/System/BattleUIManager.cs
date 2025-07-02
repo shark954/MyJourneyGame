@@ -12,9 +12,6 @@ public class BattleUIManager : MonoBehaviour
 {
     public static BattleUIManager m_Instance; // シングルトン（他クラスからアクセスする用）
 
-    public List<Enemy> m_enemies;
-    public List<PlayerCharacter> m_players;
-
     private int m_currentTurn = 0;
 
     private PlayerCharacter m_currentPlayer; // 今選択中のプレイヤー（未使用）
