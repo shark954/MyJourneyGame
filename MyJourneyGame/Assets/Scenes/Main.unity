@@ -8148,7 +8148,7 @@ MonoBehaviour:
   m_fadeScript: {fileID: 294331938}
   m_holdTime: 10
   m_audioSource: {fileID: 1707826209}
-  m_clearBGM: {fileID: 0}
+  m_clearBGM: {fileID: 8300000, guid: b0798b94fb005494487d25895388f7ce, type: 3}
   m_gameOverBGM: {fileID: 8300000, guid: 27bbef2c4de600a4784bbf927ee47293, type: 3}
   m_clearBackground: {fileID: 1396261387}
   m_gameOverBackground: {fileID: 1693829148}

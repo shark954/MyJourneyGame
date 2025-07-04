@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_skillType: 3
   m_characterName: "\u60AA\u9B54\u738B"
-  m_maxHP: 1700
+  m_maxHP: 1300
   m_maxSP: 300
   m_normalAttack: 50
   m_skillAttack: 90
