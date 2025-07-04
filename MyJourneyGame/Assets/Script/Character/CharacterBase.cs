@@ -15,6 +15,10 @@ public class CharacterBase : MonoBehaviour
     public int m_currentSP;      // 現在のSP
     public bool m_deathFlag = false; // 死亡判定（戦闘不能状態か）
 
+
+    [Header("スキルエフェクト")]
+    public GameObject m_skillEffectPrefab;
+
     protected AudioSource m_audioSource; // 効果音用オーディオソース
     protected StatusEffect m_statusEffect = StatusEffect.None; // 現在の状態異常
     protected int m_effectTurns = 0; // 状態異常の残りターン数

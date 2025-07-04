@@ -73,12 +73,14 @@ public class PlayerCharacter : CharacterBase
                 damage = Mathf.RoundToInt(baseDamage * multiplier);
                 target.TakeDamage(damage);
                 target.ApplyStatusEffect(StatusEffect.Bleed);
+                PlaySkillEffect(target.transform.position); 
                 Debug.Log($"{m_data.m_characterName} の斬撃！ → {damage} ダメージ（出血）");
                 break;
 
             case SkillType.HeavyBlow:
                 damage = Mathf.RoundToInt(baseDamage * 1.5f * multiplier);
                 target.TakeDamage(damage);
+                PlaySkillEffect(target.transform.position); 
                 Debug.Log($"{m_data.m_characterName} の重撃！ → {damage} ダメージ");
                 break;
 
@@ -87,12 +89,14 @@ public class PlayerCharacter : CharacterBase
                 {
                     damage = Mathf.RoundToInt(baseDamage * multiplier);
                     target.TakeDamage(damage);
+                    PlaySkillEffect(target.transform.position);
                     Debug.Log($"{m_data.m_characterName} の連撃！ → {damage} ダメージ");
                 }
                 break;
 
             case SkillType.Debuff:
                 Debug.Log($"{m_data.m_characterName} が弱体をかけた！");
+                PlaySkillEffect(target.transform.position);
                 // 弱体効果の具体的処理は別途実装
                 break;
 
@@ -100,6 +104,7 @@ public class PlayerCharacter : CharacterBase
                 damage = Mathf.RoundToInt(baseDamage * 1.2f * multiplier);
                 target.TakeDamage(damage);
                 target.ApplyStatusEffect(StatusEffect.Burn);
+                PlaySkillEffect(target.transform.position);
                 Debug.Log($"{m_data.m_characterName} の炎攻撃！ → {damage} ダメージ（火傷）");
                 break;
 
@@ -107,11 +112,13 @@ public class PlayerCharacter : CharacterBase
                 damage = Mathf.RoundToInt(baseDamage * multiplier);
                 target.TakeDamage(damage);
                 target.ApplyStatusEffect(StatusEffect.Poison);
+                PlaySkillEffect(target.transform.position);
                 Debug.Log($"{m_data.m_characterName} の毒攻撃！ → {damage} ダメージ（毒）");
                 break;
 
             case SkillType.Shield:
                 ApplyStatusEffect(StatusEffect.Shield); // 自分にシールド付与
+                PlaySkillEffect(target.transform.position);
                 Debug.Log($"{m_data.m_characterName} はシールドを張った！");
                 break;
 
@@ -121,9 +128,10 @@ public class PlayerCharacter : CharacterBase
                     Debug.Log($"{m_data.m_characterName} は回復対象がいないためスキルを無効化！");
                     break;
                 }
-
+             
                 int healAmount = Mathf.RoundToInt(baseDamage * multiplier);
                 target.m_currentHP = Mathf.Min(target.m_currentHP + healAmount, target.m_data.m_maxHP);
+                PlaySkillEffect(target.transform.position);
                 Debug.Log($"{m_data.m_characterName} は {target.m_data.m_characterName} を {healAmount} 回復した！");
                 if (target is PlayerCharacter player)
                 {
@@ -145,6 +153,16 @@ public class PlayerCharacter : CharacterBase
         UpdateStatusDisplay();
     }
 
+
+    private void PlaySkillEffect(Vector3 targetPosition)
+    {
+        if (m_skillEffectPrefab != null)
+        {
+            Vector3 spawnPos = new Vector3(targetPosition.x, targetPosition.y, -1f); // カメラより手前に出す
+            GameObject effect = Instantiate(m_skillEffectPrefab, spawnPos, Quaternion.identity);
+            Destroy(effect, 2f); // 2秒後に自動削除
+        }
+    }
 
     /// <summary>
     /// キャラが選択された時に呼ばれる（UIと表情切替）
