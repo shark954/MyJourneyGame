@@ -531,6 +531,7 @@ MonoBehaviour:
   m_currentHP: 0
   m_currentSP: 0
   m_deathFlag: 0
+  m_skillEffectPrefab: {fileID: 6710139492206580332, guid: 95b8d3d65b5d7f1409c4ed1723887826, type: 3}
   m_nameText: {fileID: 5189981715727275691}
   m_hpSlider: {fileID: 5922708092535637615}
   m_hpFillImage: {fileID: 5159953726958786354}

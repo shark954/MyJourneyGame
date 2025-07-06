@@ -530,6 +530,8 @@ MonoBehaviour:
   m_data: {fileID: 11400000, guid: 442785e3b8c86314484d9fc3a2f5d234, type: 2}
   m_currentHP: 0
   m_currentSP: 0
+  m_deathFlag: 0
+  m_skillEffectPrefab: {fileID: 4021103657954561961, guid: 5c755f9bc5253ea418e919994537dcc7, type: 3}
   m_nameText: {fileID: 5189981715727275691}
   m_hpSlider: {fileID: 5922708092535637615}
   m_hpFillImage: {fileID: 5159953726958786354}
@@ -537,7 +539,6 @@ MonoBehaviour:
   m_normal: {fileID: 0}
   m_damaged: {fileID: 0}
   m_lowHP: {fileID: 0}
-  m_deathflag: 0
 --- !u!1 &8933948600855238408
 GameObject:
   m_ObjectHideFlags: 0
