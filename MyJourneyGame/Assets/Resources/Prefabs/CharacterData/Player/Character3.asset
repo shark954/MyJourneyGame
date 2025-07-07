@@ -23,7 +23,7 @@ MonoBehaviour:
   m_iconNormal: {fileID: 21300000, guid: c7cf9e5ea31c9964ba2d3c5836d5942f, type: 3}
   m_iconAttack: {fileID: 21300000, guid: 7974167901a1a2f469fa2665018c815a, type: 3}
   m_iconLowHP: {fileID: 21300000, guid: 859f649fca78d234b9e18c0eec481ce3, type: 3}
-  m_iconDamaged: {fileID: 21300000, guid: 82f2fa8b45f6e6140b1da28c779aaa49, type: 3}
+  m_iconDamaged: {fileID: 21300000, guid: 6795e7b579e797349a4d3de52b875161, type: 3}
   m_iconSelected: {fileID: 21300000, guid: 16aedfd1e03ee314a881ec860dc59bf6, type: 3}
   m_attackSE: {fileID: 8300000, guid: 8fc154754d89df94e9a3effbbb6be405, type: 3}
   m_skillSE: {fileID: 8300000, guid: 09112024f5762854d9fb0c9422da60c9, type: 3}
