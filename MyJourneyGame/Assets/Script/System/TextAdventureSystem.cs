@@ -143,11 +143,18 @@ public class TextAdventureSystem : MonoBehaviour
     {
         if (!File.Exists(filePath))
         {
-            Debug.LogError("シナリオファイルが見つからねぇよ!: " + filePath);
+            Debug.LogError("シナリオファイルが見つからない!: " + filePath);
             return;
         }
 
-        string[] lines = File.ReadAllLines(filePath);
+        byte[] data = File.ReadAllBytes(filePath);
+        byte key = 0x5A;
+        for (int i = 0; i < data.Length; i++)
+        {
+            data[i] ^= key;
+        }
+        string text = System.Text.Encoding.UTF8.GetString(data);
+        string[] lines = text.Split('\n'); // テキストとして復号→行に分割
         m_AllLines = new List<string>(lines); // 全行を保持
         m_Commands.Clear();
         m_LabelLineIndex.Clear();
@@ -171,7 +178,7 @@ public class TextAdventureSystem : MonoBehaviour
 
     public void ResetScenario()
     {
-        LoadScenario(Application.streamingAssetsPath + "/scenario.txt");
+        LoadScenario(Application.streamingAssetsPath + "/scenario.bytes");
 
         currentMode = Mode.Normal;         // モードを通常に
         m_currentCommand = "";             // 実行中コマンドをクリア
@@ -341,7 +348,7 @@ public class TextAdventureSystem : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("Enemy スクリプトがプレハブに見つからん！");
+                    Debug.LogError("Enemy スクリプトがプレハブに見つからない！");
                 }
             }
             else
@@ -394,7 +401,7 @@ public class TextAdventureSystem : MonoBehaviour
         else
         {
             // 未知のコマンド
-            Debug.LogWarning("未知のコマンドにゃ?: " + command);
+            Debug.LogWarning("未知のコマンド?: " + command);
             // 不明なコマンドはスキップ
             NextCommand();
         }
@@ -441,7 +448,7 @@ public class TextAdventureSystem : MonoBehaviour
             m_DisplayImage[No].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         }
         else
-            Debug.LogWarning("画像が見つからん!: " + Message);
+            Debug.LogWarning("画像が見つからない!: " + Message);
     }
 
     /// <summary>
@@ -472,7 +479,7 @@ public class TextAdventureSystem : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("背景画像が見つからん!: " + Message);
+            Debug.LogWarning("背景画像が見つからない!: " + Message);
         }
     }
 
@@ -502,7 +509,7 @@ public class TextAdventureSystem : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("BGMが見つからん!: " + Message);
+            Debug.LogWarning("BGMが見つからない!: " + Message);
         }
     }
 
@@ -559,7 +566,7 @@ public class TextAdventureSystem : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("ラベルが見つからん!: " + label);
+            Debug.LogWarning("ラベルが見つからない!: " + label);
         }
     }
 
@@ -636,7 +643,7 @@ public class TextAdventureSystem : MonoBehaviour
 
         if (m_PendingBackground == null)
         {
-            Debug.LogWarning("背景画像が見つからん!: " + imageName);
+            Debug.LogWarning("背景画像が見つからない!: " + imageName);
             NextCommand();
             return;
         }
