@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
     public EndingManager m_endingManager;
 
     // === UI オブジェクト ===
+    [SerializeField,Header("UIのCanvas")]
+    private CanvasScaler m_scaler;
+
     [Header("タイトル画面")]
     public GameObject m_titlePanel;
 
@@ -43,6 +46,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Awake()
     {
+        CanvasSizeSet();
         m_titlePanel.SetActive(true);         // タイトル画面 ON
         m_endingPanel.SetActive(false);       // エンディング OFF
         m_gamePanel.SetActive(false);         // ゲーム画面 OFF
@@ -72,5 +76,20 @@ public class GameManager : MonoBehaviour
             m_resetFlag = false;                // フラグを戻す
         }
 
+    }
+
+    private void CanvasSizeSet()
+    {
+        if (m_scaler != null)
+        {
+            m_scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+
+            // 現在の画面解像度に合わせて ReferenceResolution を設定
+            m_scaler.referenceResolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+
+            // オプション: 幅と高さの比率をどちらに合わせるか（0=幅, 1=高さ, 0.5=中間）
+            m_scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            m_scaler.matchWidthOrHeight = 0.5f;
+        }
     }
 }
