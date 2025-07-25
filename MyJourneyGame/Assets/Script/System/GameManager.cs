@@ -30,6 +30,9 @@ public class GameManager : MonoBehaviour
     [Header("ストーリー画面")]
     public GameObject m_storyPanel;
 
+    [Header("フェード画面")]
+    public GameObject m_fadePanel;
+
     [Header("戦闘用UI")]
     public GameObject m_battlePanel; // 戦闘全体を囲むUIパネル
 
@@ -48,6 +51,7 @@ public class GameManager : MonoBehaviour
     {
         CanvasSizeSet();
         m_titlePanel.SetActive(true);         // タイトル画面 ON
+        m_fadePanel.SetActive(true);
         m_endingPanel.SetActive(false);       // エンディング OFF
         m_gamePanel.SetActive(false);         // ゲーム画面 OFF
         m_battlePanel.SetActive(false);       // バトルUI OFF
